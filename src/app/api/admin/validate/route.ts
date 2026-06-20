@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getUserFromSession, unauthorized, forbidden } from "@/lib/api-helpers";
 import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const user = await getUserFromSession();
   if (!user) return unauthorized();
-  if (user.role !== "admin") return forbidden();
+  if (user.role !== "admin") return NextResponse.json({ error: "Hanya Admin Wisuda yang dapat memvalidasi berkas" }, { status: 403 });
 
   await connectDB();
   const { studentId, action, catatanAdmin } = await req.json();

@@ -5,7 +5,7 @@ import { User } from "@/models/User";
 export async function POST(req: NextRequest) {
   const user = await getUserFromSession();
   if (!user) return unauthorized();
-  if (user.role !== "admin" && user.role !== "keuangan") return forbidden();
+  if (user.role !== "keuangan") return NextResponse.json({ error: "Hanya Admin Keuangan yang dapat memvalidasi pembayaran" }, { status: 403 });
 
   try {
     const { studentId, action, catatanKeuangan } = await req.json();

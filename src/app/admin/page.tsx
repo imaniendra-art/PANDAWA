@@ -40,12 +40,14 @@ export default function AdminDashboard() {
   const [flash, setFlash] = useState<{ type: string; message: string } | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [animationData, setAnimationData] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") router.replace("/login");
-    if (session?.user && (session.user as { role: string }).role !== "admin") {
-      router.replace("/" + (session.user as { role: string }).role);
+    const userRole = (session?.user as any)?.role;
+    if (userRole && !["admin", "keuangan"].includes(userRole)) {
+      router.replace("/" + userRole);
     }
   }, [session, status, router]);
 
@@ -326,45 +328,98 @@ export default function AdminDashboard() {
                       {/* Document Viewers */}
                       <div className="flex flex-col sm:flex-row gap-4 mb-8">
                         {m.fileKtp && (
-                          <a href={m.fileKtp} target="_blank" className="flex-1 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-white/10 text-center py-4 rounded-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-300 dark:hover:border-cyan-500/50 transition-all shadow-sm dark:shadow-md flex items-center justify-center gap-2">
+                          <button onClick={() => setPreviewUrl(m.fileKtp!)} className="flex-1 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-white/10 text-center py-4 rounded-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-300 dark:hover:border-cyan-500/50 transition-all shadow-sm dark:shadow-md flex items-center justify-center gap-2">
                             <ExternalLink className="h-4 w-4" /> Buka Lembar KTP
-                          </a>
+                          </button>
                         )}
                         {m.fileIjazahSma && (
-                          <a href={m.fileIjazahSma} target="_blank" className="flex-1 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-white/10 text-center py-4 rounded-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-300 dark:hover:border-cyan-500/50 transition-all shadow-sm dark:shadow-md flex items-center justify-center gap-2">
+                          <button onClick={() => setPreviewUrl(m.fileIjazahSma!)} className="flex-1 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-white/10 text-center py-4 rounded-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-300 dark:hover:border-cyan-500/50 transition-all shadow-sm dark:shadow-md flex items-center justify-center gap-2">
                             <ExternalLink className="h-4 w-4" /> Buka Lembar Ijazah
-                          </a>
+                          </button>
+                        )}
+                        {m.fileBuktiPembayaran && (
+                          <button onClick={() => setPreviewUrl(m.fileBuktiPembayaran!)} className="flex-1 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-white/10 text-center py-4 rounded-2xl font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:border-emerald-300 dark:hover:border-emerald-500/50 transition-all shadow-sm dark:shadow-md flex items-center justify-center gap-2">
+                            <ExternalLink className="h-4 w-4" /> Bukti Pembayaran
+                          </button>
                         )}
                       </div>
 
                       {/* Action Matrix */}
-                      <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-300 dark:border-white/10">
-                        <button
-                          onClick={() => validateMutation.mutate({ studentId: m._id, action: "approve" })}
-                          disabled={validateMutation.isPending}
-                          className={`${actionBtnClass} bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-500 dark:to-teal-500 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] flex-1`}
-                        >
-                          <FileCheck className="h-5 w-5" /> Setujui Berkas
-                        </button>
-                        <button
-                          onClick={() => {
-                            const catatan = prompt("Tuliskan catatan perbaikan untuk mahasiswa:");
-                            if(catatan !== null) {
-                              validateMutation.mutate({ studentId: m._id, action: "reject", catatanAdmin: catatan || undefined });
-                            }
-                          }}
-                          disabled={validateMutation.isPending}
-                          className={`${actionBtnClass} bg-gradient-to-r from-rose-600 to-red-600 dark:from-rose-500 dark:to-red-600 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(244,63,94,0.5)] flex-1`}
-                        >
-                          <FileX className="h-5 w-5" /> Minta Perbaikan
-                        </button>
-                        <button
-                          onClick={() => validateMutation.mutate({ studentId: m._id, action: "reject_nama" })}
-                          disabled={validateMutation.isPending}
-                          className={`${actionBtnClass} bg-gradient-to-r from-amber-500 to-orange-600 dark:from-amber-500 dark:to-orange-500 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] flex-1`}
-                        >
-                          <AlertTriangle className="h-5 w-5" /> Tandai Beda Nama
-                        </button>
+                      <div className="flex flex-col gap-4 pt-6 border-t border-slate-300 dark:border-white/10">
+                        {m.statusPendaftaran === "Menunggu Validasi Keuangan" && (session?.user as any)?.role === "admin" && (
+                          <div className="bg-amber-100 dark:bg-amber-500/10 text-amber-800 dark:text-amber-400 p-3 rounded-lg text-sm font-bold flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5" /> Menunggu validasi keuangan sebelum berkas dapat disetujui.
+                          </div>
+                        )}
+                        
+                        <div className="flex flex-col sm:flex-row gap-4">
+                          {(session?.user as any)?.role === "admin" && (
+                            <>
+                              <button
+                                onClick={() => validateMutation.mutate({ studentId: m._id, action: "approve" })}
+                                disabled={validateMutation.isPending || m.statusPendaftaran === "Menunggu Validasi Keuangan"}
+                                className={`${actionBtnClass} bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-500 dark:to-teal-500 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] flex-1`}
+                              >
+                                <FileCheck className="h-5 w-5" /> Setujui Berkas
+                              </button>
+                              <button
+                                onClick={() => {
+                                  const catatan = prompt("Tuliskan catatan perbaikan untuk mahasiswa:");
+                                  if(catatan !== null) {
+                                    validateMutation.mutate({ studentId: m._id, action: "reject", catatanAdmin: catatan || undefined });
+                                  }
+                                }}
+                                disabled={validateMutation.isPending}
+                                className={`${actionBtnClass} bg-gradient-to-r from-rose-600 to-red-600 dark:from-rose-500 dark:to-red-600 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(244,63,94,0.5)] flex-1`}
+                              >
+                                <FileX className="h-5 w-5" /> Minta Perbaikan
+                              </button>
+                              <button
+                                onClick={() => validateMutation.mutate({ studentId: m._id, action: "reject_nama" })}
+                                disabled={validateMutation.isPending}
+                                className={`${actionBtnClass} bg-gradient-to-r from-amber-500 to-orange-600 dark:from-amber-500 dark:to-orange-500 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] flex-1`}
+                              >
+                                <AlertTriangle className="h-5 w-5" /> Tandai Beda Nama
+                              </button>
+                            </>
+                          )}
+
+                          {(session?.user as any)?.role === "keuangan" && m.statusPendaftaran === "Menunggu Validasi Keuangan" && (
+                            <>
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    const res = await fetch("/api/admin/keuangan/validate", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ studentId: m._id, action: "approve" }),
+                                    });
+                                    if (res.ok) refetch();
+                                  } catch (err) { console.error(err); }
+                                }}
+                                className={`${actionBtnClass} bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-500 dark:to-teal-500 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] flex-1`}
+                              >
+                                <CheckSquare className="h-5 w-5" /> Validasi Lunas (Keuangan)
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  const c = prompt("Alasan tolak pembayaran:");
+                                  if (c) {
+                                    const res = await fetch("/api/admin/keuangan/validate", {
+                                      method: "POST",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ studentId: m._id, action: "reject", catatanKeuangan: c }),
+                                    });
+                                    if (res.ok) refetch();
+                                  }
+                                }}
+                                className={`${actionBtnClass} bg-gradient-to-r from-rose-600 to-red-600 dark:from-rose-500 dark:to-red-600 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(244,63,94,0.5)] flex-1`}
+                              >
+                                <FileX className="h-5 w-5" /> Tolak (Keuangan)
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -415,6 +470,31 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
+
+      {/* Modal Preview */}
+      {previewUrl && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 sm:p-6" onClick={() => setPreviewUrl(null)}>
+          <div className="bg-white dark:bg-slate-900 w-full max-w-4xl h-[85vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
+              <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" /> Pratinjau Dokumen
+              </h3>
+              <button onClick={() => setPreviewUrl(null)} className="text-slate-500 hover:text-rose-500 bg-slate-200/50 hover:bg-rose-100 dark:bg-white/10 dark:hover:bg-rose-500/20 p-2 rounded-xl transition-colors">
+                <FileX className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 bg-slate-200/50 dark:bg-black/20 p-2">
+              <iframe src={previewUrl} className="w-full h-full rounded-xl bg-white dark:bg-slate-800" title="Preview" />
+            </div>
+            <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-center">
+              <a href={previewUrl} target="_blank" className="text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-2">
+                <ExternalLink className="h-4 w-4" /> Buka di Tab Baru
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
