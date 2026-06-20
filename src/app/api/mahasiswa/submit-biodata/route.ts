@@ -27,12 +27,11 @@ export async function POST(req: NextRequest) {
       konsentrasi,
       judul_skripsi,
       ukuran_toga,
-      ukuran_kaos,
     } = fields;
 
     if (
       !nama_lengkap || !nik || !tempat_lahir || !tanggal_lahir ||
-      !konsentrasi || !judul_skripsi || !ukuran_toga || !ukuran_kaos
+      !konsentrasi || !judul_skripsi || !ukuran_toga
     ) {
       return NextResponse.json(
         { error: "Harap lengkapi semua data biodata." },
@@ -65,7 +64,6 @@ export async function POST(req: NextRequest) {
     user.konsentrasi = konsentrasi;
     user.judulSkripsi = judul_skripsi;
     user.ukuranToga = ukuran_toga;
-    user.ukuranKaos = ukuran_kaos;
     user.fileKtp = pathKtp;
     user.fileIjazahSma = pathIjazah;
     user.statusPendaftaran = "Menunggu Validasi Admin";

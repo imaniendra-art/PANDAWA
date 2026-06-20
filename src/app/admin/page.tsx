@@ -318,7 +318,7 @@ export default function AdminDashboard() {
                          </div>
                          <div className="bg-white dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner">
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-1"><User className="h-3 w-3" /> Dimensi Fisik</p>
-                            <p className="font-medium text-slate-800 dark:text-slate-200">Toga: <strong className="text-cyan-600 dark:text-cyan-400">{m.ukuranToga || "-"}</strong> <span className="text-slate-300 dark:text-slate-600">|</span> Kaos: <strong className="text-cyan-600 dark:text-cyan-400">{m.ukuranKaos || "-"}</strong></p>
+                            <p className="font-medium text-slate-800 dark:text-slate-200">Toga & Kaos: <strong className="text-cyan-600 dark:text-cyan-400">{m.ukuranToga || "-"}</strong></p>
                          </div>
                          <div className="bg-white dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner md:col-span-2 lg:col-span-4">
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-1"><FileText className="h-3 w-3" /> Manuskrip / Skripsi</p>

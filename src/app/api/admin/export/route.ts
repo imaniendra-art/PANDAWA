@@ -16,14 +16,12 @@ export async function GET(req: NextRequest) {
 
   const mahasiswaList = await User.find(baseFilter);
 
-  const header = "No,NIM/Username,Nama Lengkap (Ijazah),NIK,Tempat Lahir,Tanggal Lahir,Konsentrasi,Judul Skripsi,Ukuran Toga,Ukuran Baju Alumni,Waktu Pendaftaran";
-  const rows = mahasiswaList.map((m, idx) => {
-    const tanggalLahir = m.tanggalLahir ? m.tanggalLahir.toISOString().split("T")[0] : "-";
-    const createdAt = m.createdAt ? m.createdAt.toISOString().replace("T", " ").slice(0, 19) : "-";
-    return `${idx + 1},${m.username},${m.namaLengkap || "-"},${m.nik || "-"},${m.tempatLahir || "-"},${tanggalLahir},${m.konsentrasi || "-"},"${m.judulSkripsi || "-"}",${m.ukuranToga || "-"},${m.ukuranKaos || "-"},${createdAt}`;
+  let csv = "No,NIM,Nama Lengkap,NIK,Tempat Lahir,Tanggal Lahir,Konsentrasi,Judul Skripsi,Ukuran Toga,Tanggal Daftar\n";
+  mahasiswaList.forEach((m, idx) => {
+    const tanggalLahir = m.tanggalLahir ? new Date(m.tanggalLahir).toLocaleDateString("id-ID") : "-";
+    const createdAt = m.createdAt ? new Date(m.createdAt).toLocaleDateString("id-ID") : "-";
+    csv += `${idx + 1},${m.username},${m.namaLengkap || "-"},${m.nik || "-"},${m.tempatLahir || "-"},${tanggalLahir},${m.konsentrasi || "-"},"${m.judulSkripsi || "-"}",${m.ukuranToga || "-"},${createdAt}\n`;
   });
-
-  const csv = [header, ...rows].join("\n");
 
   return new NextResponse(csv, {
     headers: {

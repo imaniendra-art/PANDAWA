@@ -309,22 +309,15 @@ export default function MahasiswaDashboard() {
                     <input type="text" name="konsentrasi" defaultValue={data.konsentrasi || ""} className={inputClassName} required />
                   </div>
                   <div>
-                    <label className={labelClassName}>Spesifikasi Toga</label>
+                    <label className={labelClassName}>Spesifikasi Toga & Kaos</label>
                     <select name="ukuran_toga" defaultValue={data.ukuranToga || ""} className={inputClassName} required>
-                      <option value="" disabled>Pilih Dimensi Toga</option>
+                      <option value="" disabled>Pilih Dimensi Toga & Kaos</option>
                       {["S","M","L","XL","XXL"].map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                   <div className="md:col-span-2">
                     <label className={labelClassName}>Judul Karya Ilmiah / Skripsi</label>
                     <input type="text" name="judul_skripsi" defaultValue={data.judulSkripsi || ""} className={inputClassName} required />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className={labelClassName}>Spesifikasi Kaos</label>
-                    <select name="ukuran_kaos" defaultValue={data.ukuranKaos || ""} className={inputClassName} required>
-                      <option value="" disabled>Pilih Dimensi Kaos</option>
-                      {["S","M","L","XL","XXL"].map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
                   </div>
                 </div>
 

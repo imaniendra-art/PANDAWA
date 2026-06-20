@@ -74,7 +74,6 @@ export default function LaporanAdminPage() {
                 <th className="px-3 py-3 text-left">TTL</th>
                 <th className="px-3 py-3 text-left">Konsentrasi</th>
                 <th className="px-3 py-3 text-left">Toga</th>
-                <th className="px-3 py-3 text-left">Kaos</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -91,7 +90,6 @@ export default function LaporanAdminPage() {
                   <td className="px-3 py-2 text-xs">{m.tempatLahir}, {m.tanggalLahir ? new Date(m.tanggalLahir).toLocaleDateString("id-ID") : "-"}</td>
                   <td className="px-3 py-2 text-xs">{m.konsentrasi || "-"}</td>
                   <td className="px-3 py-2 text-center">{m.ukuranToga || "-"}</td>
-                  <td className="px-3 py-2 text-center">{m.ukuranKaos || "-"}</td>
                 </tr>
               ))}
             </tbody>
