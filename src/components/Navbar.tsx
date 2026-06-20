@@ -19,11 +19,14 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/50 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 shadow-sm dark:shadow-2xl transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href={dashboardLink} className="flex items-center gap-3 font-extrabold text-2xl tracking-tight text-slate-800 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">
-          <div className="p-2 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+        <Link href={dashboardLink} className="flex items-center gap-3 hover:opacity-80 transition-opacity group">
+          <div className="p-2 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.4)] group-hover:shadow-[0_0_20px_rgba(6,182,212,0.6)] transition-shadow">
             <GraduationCap className="h-6 w-6 text-white" />
           </div>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-500 dark:from-white dark:to-slate-400">PANDAWA</span>
+          <div className="flex flex-col">
+            <span className="font-extrabold text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 dark:from-white dark:to-slate-400 leading-none mb-0.5">PANDAWA STIMI</span>
+            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 tracking-widest uppercase leading-none hidden sm:block">Pusat Administrasi Pendaftaran Wisuda</span>
+          </div>
         </Link>
         <div className="flex items-center gap-4 sm:gap-5 text-sm">
           <ThemeToggle />

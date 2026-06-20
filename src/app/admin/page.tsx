@@ -87,31 +87,49 @@ export default function AdminDashboard() {
   }
 
   const actionBtnClass = "px-5 py-2.5 rounded-xl text-sm font-bold shadow-md transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 text-white flex justify-center items-center gap-2";
-  const navLinkClass = "flex items-center gap-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-white/20 transition-all shadow-sm";
+  const menuCardClass = "flex flex-col items-center justify-center gap-3 bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-5 rounded-2xl shadow-sm dark:shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-lg dark:hover:shadow-[0_0_25px_rgba(6,182,212,0.3)] hover:border-cyan-300 dark:hover:border-cyan-500/50 transition-all duration-300 transform hover:-translate-y-1 group";
+  const menuIconClass = "h-8 w-8 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform duration-300";
+  const menuTextClass = "font-bold text-slate-800 dark:text-white text-sm text-center";
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans selection:bg-cyan-500/30 text-slate-900 dark:text-slate-100 pb-12 animate-in fade-in duration-500 transition-colors">
       <Navbar />
       <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
         
-        {/* Header Console */}
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between mb-10 gap-8">
-          <div>
+        {/* Header Console & Main Navigation Grid */}
+        <div className="mb-10">
+          <div className="mb-8 text-center sm:text-left">
             <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight">Konsol Administratif</h1>
             <p className="text-sm text-cyan-600 dark:text-cyan-400 mt-2 font-medium tracking-wide">Control Center & Validasi Data Wisuda</p>
           </div>
           
-          <div className="flex flex-wrap items-center gap-3">
-            <Link href="/admin/scan" className="animate-pulse mr-2 bg-gradient-to-r from-cyan-600 to-blue-600 dark:from-cyan-500 dark:to-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition duration-300 ease-in-out transform hover:-translate-y-0.5 flex items-center gap-2 border border-transparent dark:border-cyan-400/50">
-              <ScanLine className="h-5 w-5" /> Scan QR Toga
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {/* Navigasi Utama */}
+            <Link href="/admin/angkatan" className={menuCardClass}>
+              <Users className={menuIconClass} />
+              <span className={menuTextClass}>Gelombang</span>
             </Link>
-            <div className="h-8 w-px bg-slate-300 dark:bg-white/20 hidden sm:block mx-1"></div>
-            <Link href="/admin/angkatan" className={navLinkClass}><Users className="h-4 w-4" /> Gelombang</Link>
-            <Link href="/admin/kelola-user" className={navLinkClass}><CheckSquare className="h-4 w-4" /> Otorisasi User</Link>
-            <Link href="/admin/laporan" className={navLinkClass}><FileText className="h-4 w-4" /> Rekam Jejak</Link>
-            <Link href="/admin/settings" className={navLinkClass}><Settings className="h-4 w-4" /> Konfigurasi</Link>
-            <a href="/api/admin/export-pddikti" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-emerald-500 to-teal-600 dark:from-emerald-500 dark:to-teal-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg dark:shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] transition duration-300 ease-in-out transform hover:-translate-y-0.5 flex items-center gap-2">
-              <Download className="h-4 w-4" /> Ekspor PDDikti
+            <Link href="/admin/kelola-user" className={menuCardClass}>
+              <CheckSquare className={menuIconClass} />
+              <span className={menuTextClass}>Otorisasi User</span>
+            </Link>
+            <Link href="/admin/laporan" className={menuCardClass}>
+              <FileText className={menuIconClass} />
+              <span className={menuTextClass}>Rekam Jejak</span>
+            </Link>
+            <Link href="/admin/settings" className={menuCardClass}>
+              <Settings className={menuIconClass} />
+              <span className={menuTextClass}>Konfigurasi</span>
+            </Link>
+
+            {/* Tombol Aksi Utama */}
+            <Link href="/admin/scan" className="flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-cyan-600 to-blue-600 dark:from-cyan-500 dark:to-blue-600 border border-transparent dark:border-cyan-400/50 p-5 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition-all duration-300 transform hover:-translate-y-1 group">
+              <ScanLine className="h-8 w-8 text-white group-hover:scale-110 group-hover:animate-pulse transition-transform duration-300" />
+              <span className="font-bold text-white text-sm text-center">Scan QR Toga</span>
+            </Link>
+            <a href="/api/admin/export-pddikti" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-emerald-500 to-teal-600 dark:from-emerald-500 dark:to-teal-500 border border-transparent dark:border-emerald-400/50 p-5 rounded-2xl shadow-lg dark:shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] transition-all duration-300 transform hover:-translate-y-1 group">
+              <Download className="h-8 w-8 text-white group-hover:scale-110 transition-transform duration-300" />
+              <span className="font-bold text-white text-sm text-center">Ekspor PDDikti</span>
             </a>
           </div>
         </div>
