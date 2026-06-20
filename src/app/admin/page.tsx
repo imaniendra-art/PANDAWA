@@ -68,7 +68,9 @@ export default function AdminDashboard() {
       const params = selectedAngkatan ? `?angkatanId=${selectedAngkatan}` : "";
       const res = await fetch(`/api/admin/dashboard${params}`);
       if (!res.ok) throw new Error("Gagal memuat data");
-      return res.json();
+      const result = await res.json();
+      console.log("Data pendaftar yang ditemukan:", result);
+      return result;
     },
     enabled: status === "authenticated",
     refetchInterval: 5000,

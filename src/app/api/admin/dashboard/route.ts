@@ -19,7 +19,11 @@ export async function GET(req: NextRequest) {
   const baseFilter: Record<string, unknown> = { role: "mahasiswa" };
   if (filterAngkatanId) baseFilter.angkatanId = filterAngkatanId;
 
-  const mahasiswaList = await User.find({ ...baseFilter, statusPendaftaran: "Menunggu Validasi Admin" });
+  const mahasiswaList = await User.find({ 
+    ...baseFilter, 
+    statusPendaftaran: { $in: ["Menunggu Validasi Admin", "Pembayaran Dikonfirmasi"] } 
+  });
+  console.log("Data pendaftar yang ditemukan di DB:", mahasiswaList.length);
   const validatedCount = await User.countDocuments({ ...baseFilter, statusPendaftaran: "Lulus/Cetak Kartu" });
   const totalPendaftar = await User.countDocuments(baseFilter);
 
