@@ -7,7 +7,7 @@ export async function GET() {
   if (user.role !== "admin") return forbidden();
 
   try {
-    const finaraUrl = process.env.FINARA_API_URL || "http://localhost:3001/api/finara/keuangan-wisuda";
+    const finaraUrl = process.env.FINARA_API_URL || "http://localhost:3000/api/finara/keuangan-wisuda";
     const secret = process.env.PANDAWA_FINARA_SECRET || "pandawa-secret-key-123";
 
     const response = await fetch(finaraUrl, {
