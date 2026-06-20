@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Users, Filter, CheckCircle, FileText, Settings, Download, Search, CheckSquare, XCircle, AlertTriangle, ScanLine, Loader2, FileCheck, FileX, ExternalLink } from "lucide-react";
+import { Users, Filter, CheckCircle, FileText, Settings, Download, Search, CheckSquare, XCircle, AlertTriangle, ScanLine, Loader2, FileCheck, FileX, ExternalLink, Calendar, ChevronDown } from "lucide-react";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -130,20 +130,23 @@ export default function AdminDashboard() {
              <p className="text-sm text-cyan-600 dark:text-cyan-400 font-medium tracking-wide">Control Center & Validasi Data Wisuda</p>
            </div>
 
-           {/* Parameter Gelombang Inline */}
+           {/* Parameter Gelombang Inline - Futuristic Dropdown */}
            <div className="relative z-10 w-full md:w-auto">
-             <div className="flex items-center gap-3 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2 shadow-sm dark:shadow-inner">
-               <Filter className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+             <div className="group relative flex items-center gap-3 bg-white/40 dark:bg-white/10 backdrop-blur-md border border-slate-200 dark:border-white/20 hover:border-cyan-400 dark:hover:border-cyan-500/50 rounded-xl px-4 py-2.5 transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+               <Calendar className="h-5 w-5 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
                <select
                  value={selectedAngkatan}
                  onChange={(e) => setSelectedAngkatan(e.target.value)}
-                 className="appearance-none bg-transparent text-sm font-bold text-slate-800 dark:text-white focus:outline-none cursor-pointer w-full md:w-64"
+                 className="appearance-none bg-transparent text-sm font-bold text-slate-800 dark:text-white focus:outline-none cursor-pointer w-full md:w-56 pr-6"
                >
-                 <option value="" className="text-slate-800 dark:text-slate-200">Semua Gelombang (Global)</option>
+                 <option value="" className="text-slate-800">Wisuda Ke- ... (Semua)</option>
                  {data?.semuaAngkatan.map((a) => (
-                   <option key={a._id} value={a._id} className="text-slate-800 dark:text-slate-200">{a.nama} {a.isActive ? "[Aktif]" : ""}</option>
+                   <option key={a._id} value={a._id} className="text-slate-800">{a.nama} {a.isActive ? "[Aktif]" : ""}</option>
                  ))}
                </select>
+               <div className="absolute right-4 pointer-events-none text-slate-500 dark:text-slate-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                 <ChevronDown className="h-4 w-4" />
+               </div>
              </div>
            </div>
 
