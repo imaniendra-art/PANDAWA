@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUserFromSession, unauthorized, forbidden } from "@/lib/api-helpers";
 import { parseForm, saveFile } from "@/lib/upload";
 
+const toTitleCase = (str: string) => {
+  return str.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+};
+
 export async function POST(req: NextRequest) {
   const user = await getUserFromSession();
   if (!user) return unauthorized();
@@ -36,6 +40,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!/^\d{16}$/.test(nik)) {
+      return NextResponse.json({ error: "NIK harus murni angka dan berjumlah 16 digit." }, { status: 400 });
+    }
+
     const fileKtp = files["file_ktp"];
     const fileIjazahSma = files["file_ijazah_sma"];
 
@@ -43,16 +51,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "File KTP dan Ijazah SMA wajib diunggah." }, { status: 400 });
     }
 
-    const pathKtp = saveFile(fileKtp, "ktp", user.username);
-    const pathIjazah = saveFile(fileIjazahSma, "ijazah_sma", user.username);
+    const pathKtp = await saveFile(fileKtp, "ktp", user.username);
+    const pathIjazah = await saveFile(fileIjazahSma, "ijazah_sma", user.username);
 
     if (!pathKtp || !pathIjazah) {
       return NextResponse.json({ error: "Format file KTP / Ijazah tidak didukung." }, { status: 400 });
     }
 
-    user.namaLengkap = nama_lengkap;
+    user.namaLengkap = toTitleCase(nama_lengkap);
     user.nik = nik;
-    user.tempatLahir = tempat_lahir;
+    user.tempatLahir = toTitleCase(tempat_lahir);
     user.tanggalLahir = new Date(tanggal_lahir);
     user.konsentrasi = konsentrasi;
     user.judulSkripsi = judul_skripsi;

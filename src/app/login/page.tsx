@@ -4,6 +4,10 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+import { LogIn, Loader2 } from "lucide-react";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export default function LoginPage() {
   const { data: session } = useSession();
@@ -12,6 +16,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [animationData, setAnimationData] = useState(null);
+
+  useEffect(() => {
+    fetch("https://assets9.lottiefiles.com/packages/lf20_t2v92oz8.json")
+      .then((res) => res.json())
+      .then((data) => setAnimationData(data))
+      .catch(() => {
+        fetch("https://assets3.lottiefiles.com/packages/lf20_touohxv0.json")
+          .then((res) => res.json())
+          .then((data) => setAnimationData(data))
+          .catch(console.error);
+      });
+  }, []);
 
   useEffect(() => {
     if (session?.user) {
@@ -25,14 +43,10 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      username,
-      password,
-      redirect: false,
-    });
+    const result = await signIn("credentials", { username, password, redirect: false });
 
     if (result?.error) {
-      setError("Username atau Password salah. Silakan coba lagi.");
+      setError("Username atau Password salah. Akses ditolak.");
       setLoading(false);
     } else {
       router.refresh();
@@ -40,55 +54,95 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-700">PANDAWA</h1>
-          <p className="text-gray-500 text-sm mt-1">Pusat Administrasi Pendaftaran Wisuda</p>
+    <div className="min-h-screen flex w-full bg-slate-950 font-sans selection:bg-cyan-500/30 text-slate-100 animate-in fade-in duration-500">
+      
+      <div className="hidden lg:flex w-1/2 relative overflow-hidden flex-col items-center justify-center p-12 border-r border-white/10">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-slate-900 to-cyan-900/40 z-0"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div className="w-full max-w-md h-80 mb-8 flex items-center justify-center z-10 drop-shadow-2xl">
+          {animationData ? (
+            <Lottie animationData={animationData} loop={true} />
+          ) : (
+             <div className="w-48 h-48 border-4 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin"></div>
+          )}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">{error}</div>
-          )}
+        <div className="text-center max-w-lg z-10 relative">
+          <h1 className="text-4xl font-extrabold tracking-tight mb-4 leading-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
+            Satu Langkah Lagi <br /> Menuju Gelar Impianmu. ✨
+          </h1>
+          <p className="text-lg text-slate-400 font-medium leading-relaxed">
+            Portal Pendaftaran Wisuda PANDAWA. Cepat, Paperless, dan Bebas Ribet. Wujudkan generasi Kampus Berdampak.
+          </p>
+        </div>
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Username (NIM)</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              required
-            />
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 md:px-24 py-12 relative z-10">
+        <div className="max-w-md w-full mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 sm:p-12 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+          
+          <div className="flex justify-center items-center gap-6 mb-10">
+            <img src="/logo-stimi.png" alt="Logo STIMI" className="h-16 w-auto object-contain drop-shadow-lg" onError={(e) => { e.currentTarget.src = "https://via.placeholder.com/150"; }} />
+            <div className="w-px h-12 bg-white/20"></div>
+            <img src="/logo-berdampak.png" alt="Logo Berdampak" className="h-16 w-auto object-contain drop-shadow-lg" onError={(e) => { e.currentTarget.src = "https://via.placeholder.com/150"; }} />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              required
-            />
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">Masuk PANDAWA</h2>
+            <p className="text-slate-400 mt-2 font-medium">Sistem Administrasi Wisuda Terpadu</p>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium py-2.5 rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? "Memproses..." : "Masuk"}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-xl text-sm font-medium flex items-center gap-3 shadow-inner">
+                <span className="animate-pulse">⚠️</span> {error}
+              </div>
+            )}
 
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Belum punya akun?{" "}
-          <Link href="/register" className="text-blue-600 hover:underline font-medium">
-            Daftar di sini
-          </Link>
-        </p>
+            <div>
+              <label className="block text-sm font-semibold text-slate-300 mb-2">Username (NIM)</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Masukkan ID / NIM Anda"
+                className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:bg-slate-900 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all shadow-inner outline-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-slate-300 mb-2">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-500 focus:bg-slate-900 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all shadow-inner outline-none"
+                required
+              />
+            </div>
+
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3.5 rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex justify-center items-center gap-2"
+              >
+                {loading ? <Loader2 className="animate-spin h-5 w-5" /> : <LogIn className="h-5 w-5" />}
+                {loading ? "Otentikasi..." : "Akses Sistem"}
+              </button>
+            </div>
+          </form>
+
+          <p className="text-center text-sm text-slate-400 mt-8 font-medium">
+            Belum terdaftar di sistem?{" "}
+            <Link href="/register" className="text-cyan-400 hover:text-cyan-300 font-bold hover:underline transition-colors drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">
+              Registrasi Portal
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

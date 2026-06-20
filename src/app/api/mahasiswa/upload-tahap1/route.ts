@@ -22,8 +22,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Kedua file wajib diunggah." }, { status: 400 });
     }
 
-    const pathSks = saveFile(fileBebasSks, "bukti_bebas_sks", user.username);
-    const pathBayar = saveFile(fileBuktiPembayaran, "bukti_pembayaran", user.username);
+    const pathSks = await saveFile(fileBebasSks, "bukti_bebas_sks", user.username);
+    const pathBayar = await saveFile(fileBuktiPembayaran, "bukti_pembayaran", user.username);
 
     if (!pathSks || !pathBayar) {
       return NextResponse.json(

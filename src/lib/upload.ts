@@ -50,22 +50,32 @@ export async function parseForm(req: NextRequest): Promise<{
   });
 }
 
-export function saveFile(
+export async function saveFile(
   file: FormidableFile,
   subfolder: string,
   nimPrefix: string
-): string | null {
+): Promise<string | null> {
   if (!file || !file.originalFilename) return null;
+
+  // Validate MIME Type
+  if (file.mimetype !== "application/pdf" && !file.mimetype?.startsWith("image/")) {
+    return null;
+  }
 
   const ext = file.originalFilename.split(".").pop()?.toLowerCase();
   if (!ext || !ALLOWED_EXTENSIONS.includes(ext)) return null;
 
   const newFilename = `${nimPrefix}_${subfolder}.${ext}`;
   const dir = path.join(UPLOAD_DIR, subfolder);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  
+  try {
+    await fs.promises.access(dir);
+  } catch {
+    await fs.promises.mkdir(dir, { recursive: true });
+  }
 
   const destPath = path.join(dir, newFilename);
-  fs.copyFileSync(file.filepath, destPath);
+  await fs.promises.rename(file.filepath, destPath);
 
   return `/uploads/${subfolder}/${newFilename}`;
 }
