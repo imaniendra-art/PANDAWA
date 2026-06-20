@@ -151,7 +151,7 @@ export default function MahasiswaDashboard() {
     submitBiodata.mutate(fd);
   };
 
-  const inputClassName = "w-full bg-white dark:bg-slate-900/50 border border-slate-300 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all shadow-sm dark:shadow-inner outline-none";
+  const inputClassName = "w-full bg-white dark:bg-slate-900/50 border border-slate-300 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all shadow-sm dark:shadow-inner outline-none";
   const labelClassName = "block text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2";
   const cardClassName = "bg-white/80 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-sm dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] relative overflow-hidden transition-colors w-full";
   const fileInputClass = "w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-cyan-100 dark:file:bg-cyan-500/20 file:text-cyan-700 dark:file:text-cyan-300 hover:file:bg-cyan-200 dark:hover:file:bg-cyan-500/30 file:transition-all cursor-pointer bg-white dark:bg-slate-900/50 border border-slate-300 dark:border-white/10 rounded-xl p-1 shadow-sm dark:shadow-none";
