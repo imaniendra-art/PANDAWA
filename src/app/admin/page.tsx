@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Users, Filter, CheckCircle, FileText, Settings, Download, Search, CheckSquare, XCircle, AlertTriangle, ScanLine, Loader2, FileCheck, FileX, ExternalLink, Calendar, ChevronDown } from "lucide-react";
+import { Users, Filter, CheckCircle, FileText, Settings, Download, Search, CheckSquare, XCircle, AlertTriangle, ScanLine, Loader2, FileCheck, FileX, ExternalLink, Calendar, ChevronDown, RefreshCw } from "lucide-react";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -62,7 +62,7 @@ export default function AdminDashboard() {
       });
   }, []);
 
-  const { data, isLoading } = useQuery<AdminData>({
+  const { data, isLoading, refetch } = useQuery<AdminData>({
     queryKey: ["admin-dashboard", selectedAngkatan],
     queryFn: async () => {
       const params = selectedAngkatan ? `?angkatanId=${selectedAngkatan}` : "";
@@ -71,6 +71,7 @@ export default function AdminDashboard() {
       return res.json();
     },
     enabled: status === "authenticated",
+    refetchInterval: 5000,
   });
 
   const validateMutation = useMutation({
@@ -98,7 +99,7 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center font-sans">
         <div className="flex flex-col items-center">
           <Loader2 className="h-16 w-16 text-cyan-600 dark:text-cyan-500 animate-spin mb-6" />
-          <p className="text-cyan-700 dark:text-cyan-400 font-bold tracking-widest uppercase animate-pulse">Inisialisasi Konsol Admin...</p>
+          <p className="text-cyan-700 dark:text-cyan-400 font-bold tracking-widest uppercase animate-pulse">Menyiapkan Pusat Layanan...</p>
         </div>
       </div>
     );
@@ -127,14 +128,17 @@ export default function AdminDashboard() {
            
            {/* Text Block */}
            <div className="w-full md:w-auto flex-1 relative z-10">
-             <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-1">Konsol Administratif</h1>
-             <p className="text-sm text-cyan-600 dark:text-cyan-400 font-medium tracking-wide">Control Center & Validasi Data Wisuda</p>
+             <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-1">Pusat Layanan Admin</h1>
+             <p className="text-sm text-cyan-600 dark:text-cyan-400 font-medium tracking-wide">Pusat Pengelolaan Pendaftaran Wisuda</p>
            </div>
 
            {/* Parameter Gelombang Inline - Futuristic Custom Dropdown */}
-           <div className="relative z-50 w-full md:w-auto">
+           <div className="relative z-50 w-full md:w-auto flex items-center gap-3">
+             <button onClick={() => refetch()} className="p-2.5 bg-white/40 dark:bg-white/10 backdrop-blur-md border border-slate-200 dark:border-white/20 hover:border-cyan-400 dark:hover:border-cyan-500/50 rounded-xl text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]" title="Segarkan Data Secara Manual">
+                <RefreshCw className="h-5 w-5" />
+             </button>
              <div 
-               className="group relative flex items-center gap-3 bg-white/40 dark:bg-white/10 backdrop-blur-md border border-slate-200 dark:border-white/20 hover:border-cyan-400 dark:hover:border-cyan-500/50 rounded-xl px-4 py-2.5 transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer"
+               className="group relative flex items-center gap-3 bg-white/40 dark:bg-white/10 backdrop-blur-md border border-slate-200 dark:border-white/20 hover:border-cyan-400 dark:hover:border-cyan-500/50 rounded-xl px-4 py-2.5 transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer flex-1 md:flex-none"
                onClick={() => setDropdownOpen(!dropdownOpen)}
              >
                <Calendar className="h-5 w-5 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
@@ -191,11 +195,11 @@ export default function AdminDashboard() {
           </Link>
           <Link href="/admin/kelola-user" className={menuCardClass}>
             <CheckSquare className={menuIconClass} />
-            <span className={menuTextClass}>Otorisasi User</span>
+            <span className={menuTextClass}>Data Pendaftar</span>
           </Link>
           <Link href="/admin/laporan" className={menuCardClass}>
             <FileText className={menuIconClass} />
-            <span className={menuTextClass}>Rekam Jejak</span>
+            <span className={menuTextClass}>Riwayat Pemeriksaan</span>
           </Link>
           <Link href="/admin/settings" className={menuCardClass}>
             <Settings className={menuIconClass} />
@@ -215,9 +219,9 @@ export default function AdminDashboard() {
         {/* Global Stats Panel (Bento Block 3) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           {[
-            { label: "Total Populasi", value: data?.totalPendaftar || 0, icon: <Users className="h-7 w-7" />, color: "blue", lightBg: "bg-blue-50", darkBg: "dark:bg-blue-500/20", lightText: "text-blue-600", darkText: "dark:text-blue-400", lightBorder: "border-blue-100", darkBorder: "dark:border-blue-500/30" },
-            { label: "Antrean Validasi", value: data?.mahasiswaList.length || 0, icon: <Loader2 className="h-7 w-7" />, color: "amber", lightBg: "bg-amber-50", darkBg: "dark:bg-amber-500/20", lightText: "text-amber-600", darkText: "dark:text-amber-400", lightBorder: "border-amber-100", darkBorder: "dark:border-amber-500/30" },
-            { label: "Disetujui Sistem", value: data?.validatedCount || 0, icon: <CheckCircle className="h-7 w-7" />, color: "emerald", lightBg: "bg-emerald-50", darkBg: "dark:bg-emerald-500/20", lightText: "text-emerald-600", darkText: "dark:text-emerald-400", lightBorder: "border-emerald-100", darkBorder: "dark:border-emerald-500/30" }
+            { label: "Total Pendaftar", value: data?.totalPendaftar || 0, icon: <Users className="h-7 w-7" />, color: "blue", lightBg: "bg-blue-50", darkBg: "dark:bg-blue-500/20", lightText: "text-blue-600", darkText: "dark:text-blue-400", lightBorder: "border-blue-100", darkBorder: "dark:border-blue-500/30" },
+            { label: "Antrean Periksa", value: data?.mahasiswaList.length || 0, icon: <Loader2 className="h-7 w-7" />, color: "amber", lightBg: "bg-amber-50", darkBg: "dark:bg-amber-500/20", lightText: "text-amber-600", darkText: "dark:text-amber-400", lightBorder: "border-amber-100", darkBorder: "dark:border-amber-500/30" },
+            { label: "Telah Disetujui", value: data?.validatedCount || 0, icon: <CheckCircle className="h-7 w-7" />, color: "emerald", lightBg: "bg-emerald-50", darkBg: "dark:bg-emerald-500/20", lightText: "text-emerald-600", darkText: "dark:text-emerald-400", lightBorder: "border-emerald-100", darkBorder: "dark:border-emerald-500/30" }
           ].map((stat, i) => (
             <div key={i} className={`bg-white dark:bg-transparent dark:bg-gradient-to-br dark:from-${stat.color}-500/20 dark:to-${stat.color}-600/5 backdrop-blur-xl border border-slate-200 dark:border-${stat.color}-500/20 rounded-3xl p-6 relative overflow-hidden shadow-sm dark:shadow-[0_0_30px_rgba(0,0,0,0.5)] transition-colors`}>
                <div className={`hidden dark:block absolute -right-4 -top-4 w-24 h-24 bg-${stat.color}-500/20 rounded-full blur-2xl`}></div>
@@ -238,7 +242,7 @@ export default function AdminDashboard() {
         <div className="bg-white/80 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl shadow-xl dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden transition-colors">
           <div className="px-8 py-6 border-b border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/5 flex justify-between items-center backdrop-blur-md">
             <h2 className="font-extrabold text-slate-800 dark:text-white text-xl flex items-center gap-3">
-              <Search className="h-5 w-5 text-cyan-600 dark:text-cyan-400" /> Matrix Validasi Data
+              <Search className="h-5 w-5 text-cyan-600 dark:text-cyan-400" /> Daftar Antrean Pemeriksaan
             </h2>
             <span className="bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30 text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse"></span> {data?.mahasiswaList.length || 0} Menunggu
@@ -250,8 +254,8 @@ export default function AdminDashboard() {
               <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-200 dark:border-white/5 shadow-inner">
                  <CheckSquare className="h-10 w-10" />
               </div>
-              <p className="text-slate-800 dark:text-white font-bold text-2xl mb-2 tracking-tight">Zona Validasi Bersih</p>
-              <p className="text-slate-500 dark:text-slate-400 text-sm">Sistem tidak mendeteksi adanya antrean dokumen pada parameter ini.</p>
+              <p className="text-slate-800 dark:text-white font-bold text-2xl mb-2 tracking-tight">Antrean Kosong</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">Saat ini tidak ada berkas yang perlu diperiksa.</p>
             </div>
           ) : (
             <div className="divide-y divide-slate-200 dark:divide-white/5">
@@ -271,7 +275,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <button className="text-cyan-700 dark:text-cyan-500 bg-cyan-100 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/20 px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2 hover:bg-cyan-600 hover:text-white transition-all shadow-sm">
-                      {expandedId === m._id ? "Tutup Panel" : "Inspeksi Visual"}
+                      {expandedId === m._id ? "Tutup Panel" : "Buka Panel"}
                       <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform duration-300 ${expandedId === m._id ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                     </button>
                   </div>
@@ -322,11 +326,11 @@ export default function AdminDashboard() {
                           disabled={validateMutation.isPending}
                           className={`${actionBtnClass} bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-500 dark:to-teal-500 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] flex-1`}
                         >
-                          <FileCheck className="h-5 w-5" /> Otorisasi Bersih
+                          <FileCheck className="h-5 w-5" /> Setujui Berkas
                         </button>
                         <button
                           onClick={() => {
-                            const catatan = prompt("Input log penolakan / instruksi revisi:");
+                            const catatan = prompt("Tuliskan catatan perbaikan untuk mahasiswa:");
                             if(catatan !== null) {
                               validateMutation.mutate({ studentId: m._id, action: "reject", catatanAdmin: catatan || undefined });
                             }
@@ -334,14 +338,14 @@ export default function AdminDashboard() {
                           disabled={validateMutation.isPending}
                           className={`${actionBtnClass} bg-gradient-to-r from-rose-600 to-red-600 dark:from-rose-500 dark:to-red-600 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(244,63,94,0.5)] flex-1`}
                         >
-                          <FileX className="h-5 w-5" /> Tolak Berkas
+                          <FileX className="h-5 w-5" /> Minta Perbaikan
                         </button>
                         <button
                           onClick={() => validateMutation.mutate({ studentId: m._id, action: "reject_nama" })}
                           disabled={validateMutation.isPending}
                           className={`${actionBtnClass} bg-gradient-to-r from-amber-500 to-orange-600 dark:from-amber-500 dark:to-orange-500 hover:shadow-lg dark:hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] flex-1`}
                         >
-                          <AlertTriangle className="h-5 w-5" /> Flag: Beda Nama
+                          <AlertTriangle className="h-5 w-5" /> Tandai Beda Nama
                         </button>
                       </div>
                     </div>

@@ -58,6 +58,7 @@ export default function MahasiswaDashboard() {
       return res.json();
     },
     enabled: status === "authenticated",
+    refetchInterval: 5000,
   });
 
   const uploadTahap1 = useMutation({
