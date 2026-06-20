@@ -40,6 +40,7 @@ export default function AdminDashboard() {
   const [flash, setFlash] = useState<{ type: string; message: string } | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [animationData, setAnimationData] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") router.replace("/login");
@@ -130,24 +131,46 @@ export default function AdminDashboard() {
              <p className="text-sm text-cyan-600 dark:text-cyan-400 font-medium tracking-wide">Control Center & Validasi Data Wisuda</p>
            </div>
 
-           {/* Parameter Gelombang Inline - Futuristic Dropdown */}
-           <div className="relative z-10 w-full md:w-auto">
-             <div className="group relative flex items-center gap-3 bg-white/40 dark:bg-white/10 backdrop-blur-md border border-slate-200 dark:border-white/20 hover:border-cyan-400 dark:hover:border-cyan-500/50 rounded-xl px-4 py-2.5 transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+           {/* Parameter Gelombang Inline - Futuristic Custom Dropdown */}
+           <div className="relative z-50 w-full md:w-auto">
+             <div 
+               className="group relative flex items-center gap-3 bg-white/40 dark:bg-white/10 backdrop-blur-md border border-slate-200 dark:border-white/20 hover:border-cyan-400 dark:hover:border-cyan-500/50 rounded-xl px-4 py-2.5 transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer"
+               onClick={() => setDropdownOpen(!dropdownOpen)}
+             >
                <Calendar className="h-5 w-5 text-cyan-600 dark:text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
-               <select
-                 value={selectedAngkatan}
-                 onChange={(e) => setSelectedAngkatan(e.target.value)}
-                 className="appearance-none bg-transparent text-sm font-bold text-slate-800 dark:text-white focus:outline-none cursor-pointer w-full md:w-56 pr-6"
-               >
-                 <option value="" className="text-slate-800">Wisuda Ke- ... (Semua)</option>
-                 {data?.semuaAngkatan.map((a) => (
-                   <option key={a._id} value={a._id} className="text-slate-800">{a.nama} {a.isActive ? "[Aktif]" : ""}</option>
-                 ))}
-               </select>
-               <div className="absolute right-4 pointer-events-none text-slate-500 dark:text-slate-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+               
+               <div className="text-sm font-bold text-slate-800 dark:text-white w-full md:w-56 pr-6 truncate">
+                 {selectedAngkatan ? data?.semuaAngkatan.find(a => a._id === selectedAngkatan)?.nama + (data?.semuaAngkatan.find(a => a._id === selectedAngkatan)?.isActive ? " [Aktif]" : "") : "Wisuda Ke- ... (Semua)"}
+               </div>
+
+               <div className={`absolute right-4 pointer-events-none text-slate-500 dark:text-slate-300 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-transform duration-300 ${dropdownOpen ? 'rotate-180' : ''}`}>
                  <ChevronDown className="h-4 w-4" />
                </div>
              </div>
+
+             {/* Custom Dropdown Panel */}
+             {dropdownOpen && (
+               <div className="absolute right-0 md:left-0 mt-2 w-full min-w-[280px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200 dark:border-white/20 shadow-2xl rounded-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                 <div 
+                   className="px-4 py-3 text-sm font-bold text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors border-b border-slate-100 dark:border-white/5"
+                   onClick={() => { setSelectedAngkatan(""); setDropdownOpen(false); }}
+                 >
+                   Wisuda Ke- ... (Semua)
+                 </div>
+                 <div className="max-h-60 overflow-y-auto">
+                   {data?.semuaAngkatan.map((a) => (
+                     <div 
+                       key={a._id} 
+                       className={`px-4 py-3 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors flex items-center justify-between ${selectedAngkatan === a._id ? 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400 font-bold' : 'text-slate-700 dark:text-slate-300'}`}
+                       onClick={() => { setSelectedAngkatan(a._id); setDropdownOpen(false); }}
+                     >
+                       {a.nama} 
+                       {a.isActive && <span className="text-[10px] uppercase tracking-wider font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/30">Aktif</span>}
+                     </div>
+                   ))}
+                 </div>
+               </div>
+             )}
            </div>
 
            {/* Lottie Animation Compresed */}
