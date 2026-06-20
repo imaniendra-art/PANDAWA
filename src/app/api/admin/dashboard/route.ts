@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
   const mahasiswaList = await User.find({ 
     ...baseFilter, 
-    statusPendaftaran: { $in: ["Menunggu Validasi Admin", "Pembayaran Dikonfirmasi"] } 
+    statusPendaftaran: { $in: ["Menunggu Validasi Admin", "Pembayaran Dikonfirmasi", "Menunggu Validasi Keuangan"] } 
   });
   console.log("Data pendaftar yang ditemukan di DB:", mahasiswaList.length);
   const validatedCount = await User.countDocuments({ ...baseFilter, statusPendaftaran: "Lulus/Cetak Kartu" });

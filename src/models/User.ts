@@ -7,6 +7,7 @@ export type StatusPendaftaran =
   | "Belum Mendaftar"
   | "Menunggu Validasi Keuangan"
   | "Revisi Pembayaran"
+  | "Pembayaran Dikonfirmasi"
   | "Mengisi Biodata"
   | "Menunggu Validasi Admin"
   | "Revisi Berkas"
@@ -83,6 +84,7 @@ const UserSchema = new Schema<IUser>(
         "Belum Mendaftar",
         "Menunggu Validasi Keuangan",
         "Revisi Pembayaran",
+        "Pembayaran Dikonfirmasi",
         "Mengisi Biodata",
         "Menunggu Validasi Admin",
         "Revisi Berkas",
