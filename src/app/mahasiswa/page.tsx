@@ -41,6 +41,7 @@ export default function MahasiswaDashboard() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [flash, setFlash] = useState<{ type: string; message: string } | null>(null);
+  const [isUploadingTahap1, setIsUploadingTahap1] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") router.replace("/login");
@@ -130,10 +131,17 @@ export default function MahasiswaDashboard() {
   };
   const currentStep = getStepStatus(st);
 
-  const handleTahap1 = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleTahap1 = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    uploadTahap1.mutate(fd);
+    setIsUploadingTahap1(true);
+    try {
+      const fd = new FormData(e.currentTarget);
+      await uploadTahap1.mutateAsync(fd);
+    } catch (error) {
+      console.error("Error submit tahap 1:", error);
+    } finally {
+      setIsUploadingTahap1(false);
+    }
   };
 
   const handleBiodata = (e: React.FormEvent<HTMLFormElement>) => {
@@ -253,11 +261,11 @@ export default function MahasiswaDashboard() {
                 <div className="pt-2">
                   <button
                     type="submit"
-                    disabled={uploadTahap1.isPending}
+                    disabled={isUploadingTahap1}
                     className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg dark:shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {uploadTahap1.isPending ? <Loader2 className="animate-spin h-4 w-4" /> : <Upload className="h-4 w-4" />}
-                    {uploadTahap1.isPending ? "Mentransmisi Data..." : "Mulai Unggah"}
+                    {isUploadingTahap1 ? <Loader2 className="animate-spin h-4 w-4" /> : <Upload className="h-4 w-4" />}
+                    {isUploadingTahap1 ? "Mentransmisi Data..." : "Mulai Unggah"}
                   </button>
                 </div>
               </form>

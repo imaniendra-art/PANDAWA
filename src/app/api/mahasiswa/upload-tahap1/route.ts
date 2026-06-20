@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromSession, unauthorized, forbidden } from "@/lib/api-helpers";
-import { parseForm, saveFile } from "@/lib/upload";
+import { saveNativeFile } from "@/lib/upload";
 
 export async function POST(req: NextRequest) {
   const user = await getUserFromSession();
@@ -13,17 +13,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { files } = await parseForm(req);
+    const formData = await req.formData();
+    console.log("Data diterima:", Array.from(formData.keys()));
+    
+    const fileBebasSks = formData.get("file_bebas_sks") as File | null;
+    const fileBuktiPembayaran = formData.get("file_bukti_pembayaran") as File | null;
 
-    const fileBebasSks = files["file_bebas_sks"];
-    const fileBuktiPembayaran = files["file_bukti_pembayaran"];
-
-    if (!fileBebasSks || !fileBuktiPembayaran) {
+    if (!fileBebasSks || !fileBuktiPembayaran || typeof fileBebasSks === "string" || typeof fileBuktiPembayaran === "string") {
       return NextResponse.json({ error: "Kedua file wajib diunggah." }, { status: 400 });
     }
 
-    const pathSks = await saveFile(fileBebasSks, "bukti_bebas_sks", user.username);
-    const pathBayar = await saveFile(fileBuktiPembayaran, "bukti_pembayaran", user.username);
+    const pathSks = await saveNativeFile(fileBebasSks, "bukti_bebas_sks", user.username);
+    const pathBayar = await saveNativeFile(fileBuktiPembayaran, "bukti_pembayaran", user.username);
 
     if (!pathSks || !pathBayar) {
       return NextResponse.json(
@@ -41,6 +42,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Dokumen awal berhasil diunggah! Menunggu validasi dari bagian Keuangan." });
   } catch (err) {
     console.error("Upload tahap 1 error:", err);
-    return NextResponse.json({ error: "Gagal mengunggah file." }, { status: 500 });
+    return NextResponse.json({ error: "Gagal mengunggah file. Silakan coba lagi." }, { status: 500 });
   }
 }
