@@ -39,6 +39,21 @@ export async function POST(req: NextRequest) {
     user.catatanKeuangan = null;
     await user.save();
 
+    // Trigger webhook ke FINARA secara asynchronous (tidak perlu await)
+    fetch(process.env.FINARA_API_URL || "http://localhost:3001/api/finara/keuangan-wisuda", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.PANDAWA_FINARA_SECRET || "pandawa-secret-key-123",
+      },
+      body: JSON.stringify({
+        nim: user.username,
+        nama: user.namaLengkap || user.username,
+        wisuda_ke: user.angkatanId?.nama || "Semua",
+        status_pembayaran: user.statusPendaftaran,
+      }),
+    }).catch(err => console.error("Gagal webhook ke FINARA:", err));
+
     return NextResponse.json({ message: "Dokumen awal berhasil diunggah! Menunggu validasi dari bagian Keuangan." });
   } catch (err) {
     console.error("Upload tahap 1 error:", err);

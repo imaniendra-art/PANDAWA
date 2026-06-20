@@ -74,6 +74,17 @@ export default function AdminDashboard() {
     refetchInterval: 5000,
   });
 
+  const { data: finaraQueue, isLoading: isFinaraLoading } = useQuery({
+    queryKey: ["finara-queue"],
+    queryFn: async () => {
+      const res = await fetch(`/api/admin/finara-queue`);
+      if (!res.ok) throw new Error("Gagal memuat queue");
+      return res.json();
+    },
+    enabled: status === "authenticated",
+    refetchInterval: 5000,
+  });
+
   const validateMutation = useMutation({
     mutationFn: async ({ studentId, action, catatanAdmin }: { studentId: string; action: string; catatanAdmin?: string }) => {
       const res = await fetch("/api/admin/validate", {
@@ -244,12 +255,17 @@ export default function AdminDashboard() {
             <h2 className="font-extrabold text-slate-800 dark:text-white text-xl flex items-center gap-3">
               <Search className="h-5 w-5 text-cyan-600 dark:text-cyan-400" /> Daftar Antrean Pemeriksaan
             </h2>
-            <span className="bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30 text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse"></span> {data?.mahasiswaList.length || 0} Menunggu
-            </span>
+            <div className="flex gap-2">
+              <span className="bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30 text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse"></span> {data?.mahasiswaList.length || 0} Menunggu
+              </span>
+              <span className="bg-indigo-100 dark:bg-indigo-500/20 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-indigo-500 dark:bg-indigo-400 animate-pulse"></span> {finaraQueue?.queue?.length || 0} Antrean FINARA
+              </span>
+            </div>
           </div>
 
-          {data?.mahasiswaList.length === 0 ? (
+          {(data?.mahasiswaList.length === 0 && (!finaraQueue?.queue || finaraQueue.queue.length === 0)) ? (
             <div className="p-16 text-center">
               <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-200 dark:border-white/5 shadow-inner">
                  <CheckSquare className="h-10 w-10" />
@@ -347,6 +363,47 @@ export default function AdminDashboard() {
                         >
                           <AlertTriangle className="h-5 w-5" /> Tandai Beda Nama
                         </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {/* FINARA MIRROR QUEUE */}
+              {finaraQueue?.queue?.map((fq: any) => (
+                <div key={fq._id} className="group bg-indigo-50/30 dark:bg-indigo-900/10 hover:bg-indigo-50/80 dark:hover:bg-indigo-900/20 transition-colors duration-300 border-t border-indigo-100 dark:border-indigo-500/20">
+                  <div className="px-8 py-6 flex items-center justify-between cursor-pointer" onClick={() => setExpandedId(expandedId === fq._id ? null : fq._id)}>
+                    <div className="flex items-center gap-5">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold text-xl shadow-md border border-white/20">
+                        {fq.metadata?.nama ? fq.metadata.nama.charAt(0).toUpperCase() : "?"}
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-800 dark:text-slate-200 text-lg group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{fq.metadata?.nama || "Identitas Anonim"}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <p className="text-sm font-medium text-slate-500 font-mono">{fq.metadata?.nim || "-"}</p>
+                          <span className="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300 text-[10px] px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-500/30 font-bold uppercase tracking-wider">Menunggu Verifikasi Keuangan (FINARA)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button className="text-indigo-700 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2 hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                      {expandedId === fq._id ? "Tutup Panel" : "Buka Panel"}
+                      <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform duration-300 ${expandedId === fq._id ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                  </div>
+                  {expandedId === fq._id && (
+                    <div className="px-8 pb-8 pt-4 bg-indigo-50/50 dark:bg-indigo-900/20 border-t border-indigo-100 dark:border-indigo-500/20">
+                      <div className="p-4 bg-white dark:bg-slate-900/50 rounded-2xl border border-indigo-100 dark:border-indigo-500/20 shadow-sm flex items-start gap-4">
+                        <AlertTriangle className="h-6 w-6 text-indigo-500 mt-1" />
+                        <div>
+                          <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">Validasi Keuangan Terpisah</h3>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Berkas ini telah ditransmisikan ke aplikasi FINARA dan sedang menunggu validasi oleh Biro Administrasi Umum dan Keuangan (BAUK).
+                            <br/><br/>
+                            <strong>ID Transaksi FINARA:</strong> <span className="font-mono">{fq.transactionNumber}</span>
+                            <br/>
+                            <strong>Deskripsi:</strong> {fq.description}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )}
