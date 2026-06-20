@@ -6,7 +6,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Users, Filter, CheckCircle, FileText, Settings, Download, Search, CheckSquare, XCircle, AlertTriangle, ScanLine, Loader2, FileCheck, FileX, ExternalLink } from "lucide-react";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface AdminData {
   mahasiswaList: Array<{
@@ -36,6 +39,7 @@ export default function AdminDashboard() {
   const [selectedAngkatan, setSelectedAngkatan] = useState("");
   const [flash, setFlash] = useState<{ type: string; message: string } | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [animationData, setAnimationData] = useState(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.replace("/login");
@@ -43,6 +47,19 @@ export default function AdminDashboard() {
       router.replace("/" + (session.user as { role: string }).role);
     }
   }, [session, status, router]);
+
+  useEffect(() => {
+    // Fetch a futuristic dashboard/data processing animation
+    fetch("https://assets9.lottiefiles.com/packages/lf20_t2v92oz8.json")
+      .then((res) => res.json())
+      .then((data) => setAnimationData(data))
+      .catch(() => {
+        fetch("https://assets3.lottiefiles.com/packages/lf20_touohxv0.json")
+          .then((res) => res.json())
+          .then((data) => setAnimationData(data))
+          .catch(console.error);
+      });
+  }, []);
 
   const { data, isLoading } = useQuery<AdminData>({
     queryKey: ["admin-dashboard", selectedAngkatan],
@@ -94,48 +111,87 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans selection:bg-cyan-500/30 text-slate-900 dark:text-slate-100 pb-12 animate-in fade-in duration-500 transition-colors">
       <Navbar />
-      <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         
-        {/* Header Console & Main Navigation Grid */}
-        <div className="mb-10">
-          <div className="mb-8 text-center sm:text-left">
-            <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight">Konsol Administratif</h1>
-            <p className="text-sm text-cyan-600 dark:text-cyan-400 mt-2 font-medium tracking-wide">Control Center & Validasi Data Wisuda</p>
+        {/* Flash Notifications */}
+        {flash && (
+          <div className={`mb-4 p-4 rounded-xl text-sm font-bold shadow-md dark:shadow-[0_0_20px_rgba(0,0,0,0.3)] flex items-center gap-3 border ${flash.type === "success" ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/30" : "bg-rose-100 dark:bg-rose-500/10 text-rose-800 dark:text-rose-400 border-rose-300 dark:border-rose-500/30"}`}>
+            {flash.type === "success" ? <CheckCircle className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />} {flash.message}
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {/* Navigasi Utama */}
-            <Link href="/admin/angkatan" className={menuCardClass}>
-              <Users className={menuIconClass} />
-              <span className={menuTextClass}>Gelombang</span>
-            </Link>
-            <Link href="/admin/kelola-user" className={menuCardClass}>
-              <CheckSquare className={menuIconClass} />
-              <span className={menuTextClass}>Otorisasi User</span>
-            </Link>
-            <Link href="/admin/laporan" className={menuCardClass}>
-              <FileText className={menuIconClass} />
-              <span className={menuTextClass}>Rekam Jejak</span>
-            </Link>
-            <Link href="/admin/settings" className={menuCardClass}>
-              <Settings className={menuIconClass} />
-              <span className={menuTextClass}>Konfigurasi</span>
-            </Link>
+        )}
 
-            {/* Tombol Aksi Utama */}
-            <Link href="/admin/scan" className="flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-cyan-600 to-blue-600 dark:from-cyan-500 dark:to-blue-600 border border-transparent dark:border-cyan-400/50 p-5 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition-all duration-300 transform hover:-translate-y-1 group">
-              <ScanLine className="h-8 w-8 text-white group-hover:scale-110 group-hover:animate-pulse transition-transform duration-300" />
-              <span className="font-bold text-white text-sm text-center">Scan QR Toga</span>
-            </Link>
-            <a href="/api/admin/export-pddikti" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-emerald-500 to-teal-600 dark:from-emerald-500 dark:to-teal-500 border border-transparent dark:border-emerald-400/50 p-5 rounded-2xl shadow-lg dark:shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] transition-all duration-300 transform hover:-translate-y-1 group">
-              <Download className="h-8 w-8 text-white group-hover:scale-110 transition-transform duration-300" />
-              <span className="font-bold text-white text-sm text-center">Ekspor PDDikti</span>
-            </a>
-          </div>
+        {/* Hero Section Control Center (Bento Block 1) */}
+        <div className="bg-white/80 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 mb-4 shadow-sm dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-colors relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+           <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/20 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+           
+           <div className="flex-1 w-full relative z-10 flex flex-col justify-center">
+             <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-2">Konsol Administratif</h1>
+             <p className="text-sm md:text-base text-cyan-600 dark:text-cyan-400 font-medium tracking-wide mb-8">Control Center & Validasi Data Wisuda</p>
+             
+             {/* Parameter Gelombang */}
+             <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4 shadow-sm dark:shadow-inner w-full max-w-xl">
+               <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 whitespace-nowrap">
+                 <Filter className="h-4 w-4 text-cyan-600 dark:text-cyan-400" /> Parameter Gelombang:
+               </label>
+               <div className="relative w-full">
+                 <select
+                   value={selectedAngkatan}
+                   onChange={(e) => setSelectedAngkatan(e.target.value)}
+                   className="appearance-none w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-cyan-500 outline-none cursor-pointer"
+                 >
+                   <option value="">Semua Gelombang (Global)</option>
+                   {data?.semuaAngkatan.map((a) => (
+                     <option key={a._id} value={a._id}>{a.nama} {a.isActive ? "[Aktif]" : ""}</option>
+                   ))}
+                 </select>
+                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 dark:text-slate-400">
+                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                 </div>
+               </div>
+             </div>
+           </div>
+
+           {/* Lottie Animation */}
+           <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 relative z-10 flex items-center justify-center drop-shadow-2xl">
+             {animationData ? (
+                <Lottie animationData={animationData} loop={true} />
+             ) : (
+                <div className="w-32 h-32 border-4 border-cyan-500/30 border-t-cyan-500 dark:border-t-cyan-400 rounded-full animate-spin"></div>
+             )}
+           </div>
         </div>
 
-        {/* Global Stats Panel */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+        {/* Main Navigation & Actions Grid (Bento Block 2) */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
+          <Link href="/admin/angkatan" className={menuCardClass}>
+            <Users className={menuIconClass} />
+            <span className={menuTextClass}>Gelombang</span>
+          </Link>
+          <Link href="/admin/kelola-user" className={menuCardClass}>
+            <CheckSquare className={menuIconClass} />
+            <span className={menuTextClass}>Otorisasi User</span>
+          </Link>
+          <Link href="/admin/laporan" className={menuCardClass}>
+            <FileText className={menuIconClass} />
+            <span className={menuTextClass}>Rekam Jejak</span>
+          </Link>
+          <Link href="/admin/settings" className={menuCardClass}>
+            <Settings className={menuIconClass} />
+            <span className={menuTextClass}>Konfigurasi</span>
+          </Link>
+
+          <Link href="/admin/scan" className="flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-cyan-600 to-blue-600 dark:from-cyan-500 dark:to-blue-600 border border-transparent dark:border-cyan-400/50 p-5 rounded-2xl shadow-lg hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition-all duration-300 transform hover:-translate-y-1 group">
+            <ScanLine className="h-8 w-8 text-white group-hover:scale-110 group-hover:animate-pulse transition-transform duration-300" />
+            <span className="font-bold text-white text-sm text-center">Scan QR Toga</span>
+          </Link>
+          <a href="/api/admin/export-pddikti" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-emerald-500 to-teal-600 dark:from-emerald-500 dark:to-teal-500 border border-transparent dark:border-emerald-400/50 p-5 rounded-2xl shadow-lg dark:shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] transition-all duration-300 transform hover:-translate-y-1 group">
+            <Download className="h-8 w-8 text-white group-hover:scale-110 transition-transform duration-300" />
+            <span className="font-bold text-white text-sm text-center">Ekspor PDDikti</span>
+          </a>
+        </div>
+
+        {/* Global Stats Panel (Bento Block 3) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           {[
             { label: "Total Populasi", value: data?.totalPendaftar || 0, icon: <Users className="h-7 w-7" />, color: "blue", lightBg: "bg-blue-50", darkBg: "dark:bg-blue-500/20", lightText: "text-blue-600", darkText: "dark:text-blue-400", lightBorder: "border-blue-100", darkBorder: "dark:border-blue-500/30" },
             { label: "Antrean Validasi", value: data?.mahasiswaList.length || 0, icon: <Loader2 className="h-7 w-7" />, color: "amber", lightBg: "bg-amber-50", darkBg: "dark:bg-amber-500/20", lightText: "text-amber-600", darkText: "dark:text-amber-400", lightBorder: "border-amber-100", darkBorder: "dark:border-amber-500/30" },
@@ -156,35 +212,7 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Angkatan Filter Layer */}
-        <div className="bg-white/80 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl p-6 mb-10 flex flex-col sm:flex-row sm:items-center gap-4 shadow-sm dark:shadow-inner transition-colors">
-          <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-            <Filter className="h-4 w-4 text-cyan-600 dark:text-cyan-400" /> Parameter Gelombang:
-          </label>
-          <div className="relative w-full sm:w-72">
-            <select
-              value={selectedAngkatan}
-              onChange={(e) => setSelectedAngkatan(e.target.value)}
-              className="appearance-none w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-cyan-500 outline-none shadow-inner cursor-pointer"
-            >
-              <option value="">Semua Gelombang (Global)</option>
-              {data?.semuaAngkatan.map((a) => (
-                <option key={a._id} value={a._id}>{a.nama} {a.isActive ? "[Aktif]" : ""}</option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 dark:text-slate-400">
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
-          </div>
-        </div>
-
-        {flash && (
-          <div className={`mb-8 p-4 rounded-xl text-sm font-bold shadow-md dark:shadow-[0_0_20px_rgba(0,0,0,0.3)] flex items-center gap-3 border ${flash.type === "success" ? "bg-emerald-100 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/30" : "bg-rose-100 dark:bg-rose-500/10 text-rose-800 dark:text-rose-400 border-rose-300 dark:border-rose-500/30"}`}>
-            {flash.type === "success" ? <CheckCircle className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />} {flash.message}
-          </div>
-        )}
-
-        {/* Validation Matrix Panel */}
+        {/* Validation Matrix Panel (Bento Block 4) */}
         <div className="bg-white/80 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl shadow-xl dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden transition-colors">
           <div className="px-8 py-6 border-b border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/5 flex justify-between items-center backdrop-blur-md">
             <h2 className="font-extrabold text-slate-800 dark:text-white text-xl flex items-center gap-3">
