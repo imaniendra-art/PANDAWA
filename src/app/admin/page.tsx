@@ -121,42 +121,38 @@ export default function AdminDashboard() {
         )}
 
         {/* Hero Section Control Center (Bento Block 1) */}
-        <div className="bg-white/80 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 mb-4 shadow-sm dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-colors relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="bg-white/80 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl py-6 px-8 mb-4 shadow-sm dark:shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-colors relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/20 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
            
-           <div className="flex-1 w-full relative z-10 flex flex-col justify-center">
-             <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-2">Konsol Administratif</h1>
-             <p className="text-sm md:text-base text-cyan-600 dark:text-cyan-400 font-medium tracking-wide mb-8">Control Center & Validasi Data Wisuda</p>
-             
-             {/* Parameter Gelombang */}
-             <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4 shadow-sm dark:shadow-inner w-full max-w-xl">
-               <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 whitespace-nowrap">
-                 <Filter className="h-4 w-4 text-cyan-600 dark:text-cyan-400" /> Parameter Gelombang:
-               </label>
-               <div className="relative w-full">
-                 <select
-                   value={selectedAngkatan}
-                   onChange={(e) => setSelectedAngkatan(e.target.value)}
-                   className="appearance-none w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-cyan-500 outline-none cursor-pointer"
-                 >
-                   <option value="">Semua Gelombang (Global)</option>
-                   {data?.semuaAngkatan.map((a) => (
-                     <option key={a._id} value={a._id}>{a.nama} {a.isActive ? "[Aktif]" : ""}</option>
-                   ))}
-                 </select>
-                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 dark:text-slate-400">
-                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                 </div>
-               </div>
+           {/* Text Block */}
+           <div className="w-full md:w-auto flex-1 relative z-10">
+             <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-1">Konsol Administratif</h1>
+             <p className="text-sm text-cyan-600 dark:text-cyan-400 font-medium tracking-wide">Control Center & Validasi Data Wisuda</p>
+           </div>
+
+           {/* Parameter Gelombang Inline */}
+           <div className="relative z-10 w-full md:w-auto">
+             <div className="flex items-center gap-3 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2 shadow-sm dark:shadow-inner">
+               <Filter className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+               <select
+                 value={selectedAngkatan}
+                 onChange={(e) => setSelectedAngkatan(e.target.value)}
+                 className="appearance-none bg-transparent text-sm font-bold text-slate-800 dark:text-white focus:outline-none cursor-pointer w-full md:w-64"
+               >
+                 <option value="" className="text-slate-800 dark:text-slate-200">Semua Gelombang (Global)</option>
+                 {data?.semuaAngkatan.map((a) => (
+                   <option key={a._id} value={a._id} className="text-slate-800 dark:text-slate-200">{a.nama} {a.isActive ? "[Aktif]" : ""}</option>
+                 ))}
+               </select>
              </div>
            </div>
 
-           {/* Lottie Animation */}
-           <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 relative z-10 flex items-center justify-center drop-shadow-2xl">
+           {/* Lottie Animation Compresed */}
+           <div className="hidden lg:flex w-24 h-24 flex-shrink-0 relative z-10 items-center justify-center drop-shadow-xl">
              {animationData ? (
                 <Lottie animationData={animationData} loop={true} />
              ) : (
-                <div className="w-32 h-32 border-4 border-cyan-500/30 border-t-cyan-500 dark:border-t-cyan-400 rounded-full animate-spin"></div>
+                <div className="w-16 h-16 border-4 border-cyan-500/30 border-t-cyan-500 dark:border-t-cyan-400 rounded-full animate-spin"></div>
              )}
            </div>
         </div>
