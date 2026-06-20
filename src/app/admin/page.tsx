@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Users, User, Filter, CheckCircle, FileText, Settings, Download, Search, CheckSquare, XCircle, AlertTriangle, ScanLine, Loader2, FileCheck, FileX, ExternalLink, Calendar, ChevronDown, RefreshCw } from "lucide-react";
+import { Users, User, Filter, CheckCircle, FileText, Settings, Download, Search, CheckSquare, XCircle, AlertTriangle, ScanLine, Loader2, FileCheck, FileX, ExternalLink, Calendar, ChevronDown, RefreshCw, Wallet } from "lucide-react";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -232,10 +232,11 @@ export default function AdminDashboard() {
         </div>
 
         {/* Global Stats Panel (Bento Block 3) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           {[
             { label: "Total Pendaftar", value: data?.totalPendaftar || 0, icon: <Users className="h-7 w-7" />, color: "blue", lightBg: "bg-blue-50", darkBg: "dark:bg-blue-500/20", lightText: "text-blue-600", darkText: "dark:text-blue-400", lightBorder: "border-blue-100", darkBorder: "dark:border-blue-500/30" },
             { label: "Antrean Periksa", value: data?.mahasiswaList.length || 0, icon: <Loader2 className="h-7 w-7" />, color: "amber", lightBg: "bg-amber-50", darkBg: "dark:bg-amber-500/20", lightText: "text-amber-600", darkText: "dark:text-amber-400", lightBorder: "border-amber-100", darkBorder: "dark:border-amber-500/30" },
+            { label: "Keuangan Disetujui", value: data?.keuanganValidatedCount || 0, icon: <Wallet className="h-7 w-7" />, color: "teal", lightBg: "bg-teal-50", darkBg: "dark:bg-teal-500/20", lightText: "text-teal-600", darkText: "dark:text-teal-400", lightBorder: "border-teal-100", darkBorder: "dark:border-teal-500/30" },
             { label: "Telah Disetujui", value: data?.validatedCount || 0, icon: <CheckCircle className="h-7 w-7" />, color: "emerald", lightBg: "bg-emerald-50", darkBg: "dark:bg-emerald-500/20", lightText: "text-emerald-600", darkText: "dark:text-emerald-400", lightBorder: "border-emerald-100", darkBorder: "dark:border-emerald-500/30" }
           ].map((stat, i) => (
             <div key={i} className={`bg-white dark:bg-transparent dark:bg-gradient-to-br dark:from-${stat.color}-500/20 dark:to-${stat.color}-600/5 backdrop-blur-xl border border-slate-200 dark:border-${stat.color}-500/20 rounded-3xl p-6 relative overflow-hidden shadow-sm dark:shadow-[0_0_30px_rgba(0,0,0,0.5)] transition-colors`}>

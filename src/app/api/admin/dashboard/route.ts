@@ -25,6 +25,10 @@ export async function GET(req: NextRequest) {
   });
   console.log("Data pendaftar yang ditemukan di DB:", mahasiswaList.length);
   const validatedCount = await User.countDocuments({ ...baseFilter, statusPendaftaran: "Lulus/Cetak Kartu" });
+  const keuanganValidatedCount = await User.countDocuments({ 
+    ...baseFilter, 
+    statusPendaftaran: { $in: ["Pembayaran Dikonfirmasi", "Mengisi Biodata", "Menunggu Validasi Admin", "Revisi Berkas", "Revisi Beda Nama", "Lulus/Cetak Kartu"] } 
+  });
   const totalPendaftar = await User.countDocuments(baseFilter);
 
   const settings = await getSettings();
@@ -32,6 +36,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     mahasiswaList,
     validatedCount,
+    keuanganValidatedCount,
     totalPendaftar,
     settings,
     semuaAngkatan,
