@@ -196,7 +196,7 @@ export default function MahasiswaDashboard() {
            <div className="relative z-10 flex items-center justify-between w-full max-w-2xl mx-auto pt-4 border-t border-slate-200 dark:border-white/10">
               <div className="flex items-center flex-1">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${currentStep >= 1 ? 'bg-cyan-600 text-white shadow-[0_0_10px_rgba(6,182,212,0.5)]' : 'bg-slate-200 dark:bg-slate-800 text-slate-500'}`}>1</div>
-                <div className="hidden sm:block text-xs font-bold ml-3 mr-4 text-slate-700 dark:text-slate-300">Transmisi Data</div>
+                <div className="hidden sm:block text-xs font-bold ml-3 mr-4 text-slate-700 dark:text-slate-300">Unggah Berkas</div>
                 <div className={`flex-1 h-1 rounded-full ${currentStep >= 2 ? 'bg-cyan-500' : 'bg-slate-200 dark:bg-slate-800/50'}`}></div>
               </div>
               <div className="flex items-center flex-1 justify-center">
@@ -218,7 +218,7 @@ export default function MahasiswaDashboard() {
             <div className="bg-rose-100 dark:bg-rose-500/10 text-rose-800 dark:text-rose-300 p-5 rounded-3xl border border-rose-200 dark:border-rose-500/20 shadow-sm relative z-10 flex gap-4 items-start">
               <AlertCircle className="h-6 w-6 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
               <div>
-                <strong className="block text-sm font-bold text-rose-700 dark:text-rose-400 mb-1">Catatan Otoritas Keuangan:</strong> 
+                <strong className="block text-sm font-bold text-rose-700 dark:text-rose-400 mb-1">Catatan Bagian Keuangan:</strong> 
                 <p className="text-sm leading-relaxed">{data.catatanKeuangan}</p>
               </div>
             </div>
@@ -228,7 +228,7 @@ export default function MahasiswaDashboard() {
             <div className="bg-orange-100 dark:bg-orange-500/10 text-orange-800 dark:text-orange-300 p-5 rounded-3xl border border-orange-200 dark:border-orange-500/20 shadow-sm relative z-10 flex gap-4 items-start">
               <AlertCircle className="h-6 w-6 text-orange-600 dark:text-orange-400 shrink-0 mt-0.5" />
               <div>
-                <strong className="block text-sm font-bold text-orange-700 dark:text-orange-400 mb-1">Instruksi Revisi Admin:</strong> 
+                <strong className="block text-sm font-bold text-orange-700 dark:text-orange-400 mb-1">Catatan Revisi Admin:</strong> 
                 <p className="text-sm leading-relaxed">{data.catatanAdmin}</p>
               </div>
             </div>
@@ -242,19 +242,19 @@ export default function MahasiswaDashboard() {
                   <Upload className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">Fase 1: Transmisi Dokumen</h2>
-                  <p className="text-slate-600 dark:text-slate-400 text-xs font-medium mt-1">Unggah instrumen pembayaran dan bukti kelulusan SKS.</p>
+                  <h2 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">Fase 1: Unggah Berkas Wisuda</h2>
+                  <p className="text-slate-600 dark:text-slate-400 text-xs font-medium mt-1">Unggah bukti pembayaran dan transkrip/bukti lulus SKS Anda.</p>
                 </div>
               </div>
               
               <form onSubmit={handleTahap1} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-inner">
-                    <label className={labelClassName}>Berkas Bebas SKS</label>
+                    <label className={labelClassName}>Transkrip / Bukti Lulus SKS</label>
                     <input type="file" name="file_bebas_sks" accept=".pdf,.png,.jpg,.jpeg" className={fileInputClass} required />
                   </div>
                   <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-inner">
-                    <label className={labelClassName}>Bukti Pembayaran Valid</label>
+                    <label className={labelClassName}>Bukti Pembayaran</label>
                     <input type="file" name="file_bukti_pembayaran" accept=".pdf,.png,.jpg,.jpeg" className={fileInputClass} required />
                   </div>
                 </div>
@@ -265,7 +265,7 @@ export default function MahasiswaDashboard() {
                     className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg dark:shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {isUploadingTahap1 ? <Loader2 className="animate-spin h-4 w-4" /> : <Upload className="h-4 w-4" />}
-                    {isUploadingTahap1 ? "Mentransmisi Data..." : "Mulai Unggah"}
+                    {isUploadingTahap1 ? "Mengunggah Berkas..." : "Mulai Unggah"}
                   </button>
                 </div>
               </form>
@@ -394,8 +394,8 @@ export default function MahasiswaDashboard() {
           {st === "Menunggu Validasi Keuangan" && (
             <div className="bg-amber-50 dark:bg-amber-500/10 backdrop-blur-xl border border-amber-200 dark:border-amber-500/20 rounded-3xl p-8 text-center shadow-lg dark:shadow-[0_0_40px_rgba(245,158,11,0.1)] relative overflow-hidden transition-colors">
                <Loader2 className="h-12 w-12 text-amber-500 dark:text-amber-400 animate-spin mx-auto mb-4 relative z-10" />
-              <p className="text-amber-700 dark:text-amber-400 font-extrabold text-xl tracking-tight mb-2">Otorisasi Keuangan Tertunda</p>
-              <p className="text-amber-600 dark:text-amber-200/70 text-sm font-medium">Sistem menunggu sinyal validasi dari otoritas keuangan (Max 2x24 jam).</p>
+              <p className="text-amber-700 dark:text-amber-400 font-extrabold text-xl tracking-tight mb-2">Menunggu Verifikasi Pembayaran</p>
+              <p className="text-amber-600 dark:text-amber-200/70 text-sm font-medium">Tim keuangan kami sedang memeriksa bukti pembayaran Anda. Proses ini memakan waktu maksimal 2x24 jam.</p>
             </div>
           )}
           
@@ -404,8 +404,8 @@ export default function MahasiswaDashboard() {
                <div className="w-14 h-14 bg-cyan-100 dark:bg-cyan-500/20 border border-cyan-300 dark:border-cyan-400 text-cyan-600 dark:text-cyan-400 rounded-full flex items-center justify-center mx-auto mb-4 relative z-10 shadow-inner">
                  <FileText className="h-6 w-6 animate-pulse" />
                </div>
-              <p className="text-cyan-800 dark:text-cyan-400 font-extrabold text-xl tracking-tight mb-2">Analisis Berkas Berjalan</p>
-              <p className="text-cyan-700 dark:text-cyan-200/70 text-sm font-medium">Admin sistem sedang melakukan verifikasi integritas data Anda.</p>
+              <p className="text-cyan-800 dark:text-cyan-400 font-extrabold text-xl tracking-tight mb-2">Verifikasi Berkas Berjalan</p>
+              <p className="text-cyan-700 dark:text-cyan-200/70 text-sm font-medium">Admin kami sedang mengecek kelengkapan biodata dan dokumen Anda. Harap bersabar ya!</p>
             </div>
           )}
 
