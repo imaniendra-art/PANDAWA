@@ -1,22 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromSession, unauthorized, forbidden } from "@/lib/api-helpers";
 import { parseForm, saveFile } from "@/lib/upload";
+import fs from "fs";
+import path from "path";
 
 const toTitleCase = (str: string) => {
   return str.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 };
 
 export async function POST(req: NextRequest) {
-  const user = await getUserFromSession();
-  if (!user) return unauthorized();
-  if (user.role !== "mahasiswa") return forbidden();
-
-  const validStatuses = ["Mengisi Biodata", "Revisi Berkas"];
-  if (!validStatuses.includes(user.statusPendaftaran)) {
-    return NextResponse.json({ error: "Status tidak valid untuk pengisian biodata." }, { status: 400 });
-  }
-
+  console.log("Memulai proses submit biodata...");
   try {
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    const user = await getUserFromSession();
+    if (!user) return unauthorized();
+    if (user.role !== "mahasiswa") return forbidden();
+
+    const validStatuses = ["Mengisi Biodata", "Revisi Berkas"];
+    if (!validStatuses.includes(user.statusPendaftaran)) {
+      return NextResponse.json({ error: "Status tidak valid untuk pengisian biodata." }, { status: 400 });
+    }
+
     const { fields, files } = await parseForm(req);
     console.log("Menerima data:", fields);
 
@@ -74,8 +82,8 @@ export async function POST(req: NextRequest) {
     await user.save();
 
     return NextResponse.json({ message: "Biodata berhasil disimpan! Menunggu validasi dari Admin." });
-  } catch (err) {
-    console.error("Submit biodata error:", err);
-    return NextResponse.json({ error: "Gagal menyimpan biodata." }, { status: 500 });
+  } catch (error: any) {
+    console.error("Error di API Submit Biodata:", error);
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
