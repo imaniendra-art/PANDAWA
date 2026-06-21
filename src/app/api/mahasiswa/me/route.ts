@@ -38,6 +38,7 @@ export async function GET() {
     ukuranKaos: user.ukuranKaos,
     fileKtp: user.fileKtp,
     fileIjazahSma: user.fileIjazahSma,
+    fileAktaKelahiran: user.fileAktaKelahiran,
     catatanAdmin: user.catatanAdmin,
     fileSuratPernyataan: user.fileSuratPernyataan,
     statusToga: user.statusToga,

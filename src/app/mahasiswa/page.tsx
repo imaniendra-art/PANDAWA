@@ -148,6 +148,18 @@ export default function MahasiswaDashboard() {
   const handleBiodata = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    
+    // Validasi file max 2MB
+    const maxSize = 2 * 1024 * 1024;
+    const filesToCheck = ["file_ktp", "file_ijazah_sma", "file_akta_kelahiran"];
+    for (const field of filesToCheck) {
+      const file = fd.get(field) as File;
+      if (file && file.size > maxSize) {
+        alert("Oops! Terdapat file yang ukurannya melebihi batas 2MB. Silakan kompres file Anda.");
+        return;
+      }
+    }
+
     submitBiodata.mutate(fd);
   };
 
@@ -321,14 +333,21 @@ export default function MahasiswaDashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-white/10 mt-4">
-                  <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-inner">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-200 dark:border-white/10 mt-4">
+                  <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-inner flex flex-col gap-2">
                     <label className={labelClassName}>Scan Identitas (KTP)</label>
                     <input type="file" name="file_ktp" accept=".pdf,.png,.jpg,.jpeg" className={fileInputClass} required />
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">Format: PDF/JPG/PNG. Maks 2MB.</p>
                   </div>
-                  <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-inner">
+                  <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-inner flex flex-col gap-2">
                     <label className={labelClassName}>Scan Legalitas (Ijazah SMA)</label>
                     <input type="file" name="file_ijazah_sma" accept=".pdf,.png,.jpg,.jpeg" className={fileInputClass} required />
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">Format: PDF/JPG/PNG. Maks 2MB.</p>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-inner flex flex-col gap-2">
+                    <label className={labelClassName}>Akta Kelahiran</label>
+                    <input type="file" name="file_akta_kelahiran" accept=".pdf,.png,.jpg,.jpeg" className={fileInputClass} required />
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">Format: PDF/JPG/PNG. Maks 2MB. Pastikan scan dokumen jelas dan tidak terpotong.</p>
                   </div>
                 </div>
 

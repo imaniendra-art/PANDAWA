@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   if (!user) return unauthorized();
   if (user.role !== "admin" && user.role !== "keuangan") return forbidden();
 
-  const baseFilter = { role: "mahasiswa" };
+  const baseFilter: Record<string, unknown> = { role: "mahasiswa" };
 
   const mahasiswaList = await User.find({ 
     ...baseFilter, 

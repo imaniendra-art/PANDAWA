@@ -45,16 +45,18 @@ export async function POST(req: NextRequest) {
 
     const fileKtp = files["file_ktp"];
     const fileIjazahSma = files["file_ijazah_sma"];
+    const fileAktaKelahiran = files["file_akta_kelahiran"];
 
-    if (!fileKtp || !fileIjazahSma) {
-      return NextResponse.json({ error: "File KTP dan Ijazah SMA wajib diunggah." }, { status: 400 });
+    if (!fileKtp || !fileIjazahSma || !fileAktaKelahiran) {
+      return NextResponse.json({ error: "File KTP, Ijazah SMA, dan Akta Kelahiran wajib diunggah." }, { status: 400 });
     }
 
-    const pathKtp = await saveFile(fileKtp, "ktp", user.username);
-    const pathIjazah = await saveFile(fileIjazahSma, "ijazah_sma", user.username);
+    const pathKtp = await saveFile(fileKtp, "ktp", `${user.username}_${Date.now()}`);
+    const pathIjazah = await saveFile(fileIjazahSma, "ijazah_sma", `${user.username}_${Date.now()}`);
+    const pathAkta = await saveFile(fileAktaKelahiran, "akta", `${user.username}_${Date.now()}`);
 
-    if (!pathKtp || !pathIjazah) {
-      return NextResponse.json({ error: "Format file KTP / Ijazah tidak didukung." }, { status: 400 });
+    if (!pathKtp || !pathIjazah || !pathAkta) {
+      return NextResponse.json({ error: "Format file tidak didukung (harus PDF/JPG/PNG)." }, { status: 400 });
     }
 
     user.namaLengkap = toTitleCase(nama_lengkap);
@@ -66,6 +68,7 @@ export async function POST(req: NextRequest) {
     user.ukuranToga = ukuran_toga;
     user.fileKtp = pathKtp;
     user.fileIjazahSma = pathIjazah;
+    user.fileAktaKelahiran = pathAkta;
     user.statusPendaftaran = "Menunggu Validasi Admin";
     await user.save();
 

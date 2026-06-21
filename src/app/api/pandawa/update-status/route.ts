@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongodb";
-import Mahasiswa from "@/models/Mahasiswa";
+import { connectDB } from "@/lib/db";
+import { User } from "@/models/User";
 
 const API_KEY = process.env.PANDAWA_FINARA_SECRET || "pandawa-secret-key-123";
 
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     await connectDB();
 
-    const mahasiswa = await Mahasiswa.findOne({ username: nim });
+    const mahasiswa = await User.findOne({ username: nim });
     if (!mahasiswa) {
       return NextResponse.json({ error: "Mahasiswa not found" }, { status: 404 });
     }

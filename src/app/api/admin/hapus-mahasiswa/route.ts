@@ -37,6 +37,7 @@ export async function POST(req: Request) {
   deleteFileIfExists(student.fileBuktiPembayaran);
   deleteFileIfExists(student.fileKtp);
   deleteFileIfExists(student.fileIjazahSma);
+  deleteFileIfExists(student.fileAktaKelahiran);
   if (student.fileSuratPernyataan && student.fileSuratPernyataan !== "AUTO") {
     deleteFileIfExists(student.fileSuratPernyataan);
   }

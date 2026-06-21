@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     const payload = {
       nim: user.username,
       nama: user.namaLengkap || user.username,
-      wisuda_ke: user.angkatanId?.nama || "Semua",
+      wisuda_ke: (user.angkatanId as any)?.nama || "Semua",
       status_pembayaran: user.statusPendaftaran,
     };
     

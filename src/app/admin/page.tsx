@@ -25,8 +25,12 @@ interface AdminData {
     ukuranKaos: string | null;
     fileKtp: string | null;
     fileIjazahSma: string | null;
+    fileBuktiPembayaran: string | null;
+    fileAktaKelahiran: string | null;
+    statusPendaftaran: string;
   }>;
   validatedCount: number;
+  keuanganValidatedCount: number;
   totalPendaftar: number;
   semuaAngkatan: Array<{ _id: string; nama: string; isActive: boolean }>;
   angkatanId: string;
@@ -291,7 +295,12 @@ export default function AdminDashboard() {
                         {m.namaLengkap ? m.namaLengkap.charAt(0).toUpperCase() : m.username.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-bold text-slate-800 dark:text-slate-200 text-lg group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">{m.namaLengkap || "Identitas Anonim"}</p>
+                        <p className="font-bold text-slate-800 dark:text-slate-200 text-lg group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors flex items-center gap-2">
+                          {m.namaLengkap || "Identitas Anonim"}
+                          {!m.fileAktaKelahiran && m.statusPendaftaran !== "Lulus/Cetak Kartu" && (
+                            <span className="text-[10px] font-bold bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400 px-2 py-0.5 rounded-full border border-rose-200 dark:border-rose-500/30 tracking-wider uppercase">Belum Lengkap</span>
+                          )}
+                        </p>
                         <p className="text-sm font-medium text-slate-500 font-mono mt-1">{m.username}</p>
                       </div>
                     </div>
@@ -336,6 +345,11 @@ export default function AdminDashboard() {
                         {m.fileIjazahSma && (
                           <button onClick={() => setPreviewUrl(m.fileIjazahSma!)} className="flex-1 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-white/10 text-center py-4 rounded-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-300 dark:hover:border-cyan-500/50 transition-all shadow-sm dark:shadow-md flex items-center justify-center gap-2">
                             <ExternalLink className="h-4 w-4" /> Buka Lembar Ijazah
+                          </button>
+                        )}
+                        {m.fileAktaKelahiran && (
+                          <button onClick={() => setPreviewUrl(m.fileAktaKelahiran!)} className="flex-1 bg-white dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-white/10 text-center py-4 rounded-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-300 dark:hover:border-cyan-500/50 transition-all shadow-sm dark:shadow-md flex items-center justify-center gap-2">
+                            <ExternalLink className="h-4 w-4" /> Buka Akta Kelahiran
                           </button>
                         )}
                         {m.fileBuktiPembayaran && (
