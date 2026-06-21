@@ -42,6 +42,7 @@ export default function MahasiswaDashboard() {
   const queryClient = useQueryClient();
   const [flash, setFlash] = useState<{ type: string; message: string } | null>(null);
   const [isUploadingTahap1, setIsUploadingTahap1] = useState(false);
+  const [isLoadingBiodata, setIsLoadingBiodata] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") router.replace("/login");
@@ -145,7 +146,7 @@ export default function MahasiswaDashboard() {
     }
   };
 
-  const handleBiodata = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleBiodata = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     
@@ -160,7 +161,14 @@ export default function MahasiswaDashboard() {
       }
     }
 
-    submitBiodata.mutate(fd);
+    setIsLoadingBiodata(true);
+    try {
+      await submitBiodata.mutateAsync(fd);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingBiodata(false);
+    }
   };
 
   const inputClassName = "w-full bg-white dark:bg-slate-900/50 border border-slate-300 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all shadow-sm dark:shadow-inner outline-none";
@@ -302,7 +310,7 @@ export default function MahasiswaDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className={labelClassName}>Nama Lengkap Resmi</label>
-                    <input type="text" name="nama_lengkap" defaultValue={data.namaLengkap || ""} className={inputClassName} placeholder="Sesuai cetakan ijazah" required />
+                    <input type="text" name="nama_lengkap" defaultValue={data.namaLengkap || ""} onInput={(e) => e.currentTarget.value = e.currentTarget.value.replace(/\b\w/g, l => l.toUpperCase())} className={inputClassName} placeholder="Sesuai cetakan ijazah" required />
                   </div>
                   <div>
                     <label className={labelClassName}>Nomor Induk Kependudukan</label>
@@ -310,7 +318,7 @@ export default function MahasiswaDashboard() {
                   </div>
                   <div>
                     <label className={labelClassName}>Tempat Lahir</label>
-                    <input type="text" name="tempat_lahir" defaultValue={data.tempatLahir || ""} className={inputClassName} required />
+                    <input type="text" name="tempat_lahir" defaultValue={data.tempatLahir || ""} onInput={(e) => e.currentTarget.value = e.currentTarget.value.replace(/\b\w/g, l => l.toUpperCase())} className={inputClassName} required />
                   </div>
                   <div>
                     <label className={labelClassName}>Tanggal Lahir</label>
@@ -318,18 +326,21 @@ export default function MahasiswaDashboard() {
                   </div>
                   <div>
                     <label className={labelClassName}>Konsentrasi</label>
-                    <input type="text" name="konsentrasi" defaultValue={data.konsentrasi || ""} className={inputClassName} required />
+                    <select name="konsentrasi" defaultValue={data.konsentrasi || ""} className={inputClassName} required>
+                      <option value="" disabled>Pilih Konsentrasi</option>
+                      {["Keuangan", "Pemasaran", "SDM", "Pengembangan Bisnis"].map(k => <option key={k} value={k}>{k}</option>)}
+                    </select>
                   </div>
                   <div>
                     <label className={labelClassName}>Spesifikasi Toga & Kaos</label>
                     <select name="ukuran_toga" defaultValue={data.ukuranToga || ""} className={inputClassName} required>
                       <option value="" disabled>Pilih Dimensi Toga & Kaos</option>
-                      {["S","M","L","XL","XXL"].map(s => <option key={s} value={s}>{s}</option>)}
+                      {["S","M","L","XL","XXL","3XL"].map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                   <div className="md:col-span-2">
                     <label className={labelClassName}>Judul Karya Ilmiah / Skripsi</label>
-                    <input type="text" name="judul_skripsi" defaultValue={data.judulSkripsi || ""} className={inputClassName} required />
+                    <input type="text" name="judul_skripsi" defaultValue={data.judulSkripsi || ""} onInput={(e) => e.currentTarget.value = e.currentTarget.value.toUpperCase()} className={inputClassName} required />
                   </div>
                 </div>
 
@@ -354,11 +365,11 @@ export default function MahasiswaDashboard() {
                 <div className="pt-4">
                   <button
                     type="submit"
-                    disabled={submitBiodata.isPending}
+                    disabled={isLoadingBiodata || submitBiodata.isPending}
                     className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg dark:shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-xl dark:hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    {submitBiodata.isPending ? <Loader2 className="animate-spin h-4 w-4" /> : <Save className="h-4 w-4" />}
-                    {submitBiodata.isPending ? "Merekam ke Sistem..." : "Simpan Biodata"}
+                    {(isLoadingBiodata || submitBiodata.isPending) ? <Loader2 className="animate-spin h-4 w-4" /> : <Save className="h-4 w-4" />}
+                    {(isLoadingBiodata || submitBiodata.isPending) ? "Merekam ke Sistem..." : "Simpan Biodata"}
                   </button>
                 </div>
               </form>

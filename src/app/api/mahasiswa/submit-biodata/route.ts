@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { fields, files } = await parseForm(req);
+    console.log("Menerima data:", fields);
 
     const {
       nama_lengkap,
