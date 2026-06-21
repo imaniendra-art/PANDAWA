@@ -3,16 +3,16 @@ import { getUserFromSession, unauthorized, forbidden } from "@/lib/api-helpers";
 import { saveNativeFile } from "@/lib/upload";
 
 export async function POST(req: NextRequest) {
-  const user = await getUserFromSession();
-  if (!user) return unauthorized();
-  if (user.role !== "mahasiswa") return forbidden();
-
-  const validStatuses = ["Belum Mendaftar", "Revisi Pembayaran"];
-  if (!validStatuses.includes(user.statusPendaftaran)) {
-    return NextResponse.json({ error: "Status tidak valid untuk upload tahap 1." }, { status: 400 });
-  }
-
   try {
+    const user = await getUserFromSession();
+    if (!user) return unauthorized();
+    if (user.role !== "mahasiswa") return forbidden();
+
+    const validStatuses = ["Belum Mendaftar", "Revisi Pembayaran"];
+    if (!validStatuses.includes(user.statusPendaftaran)) {
+      return NextResponse.json({ error: "Status tidak valid untuk upload tahap 1." }, { status: 400 });
+    }
+
     const formData = await req.formData();
     console.log("Data diterima:", Array.from(formData.keys()));
     
@@ -67,8 +67,8 @@ export async function POST(req: NextRequest) {
       .catch((err) => console.error("Gagal webhook ke FINARA:", err));
 
     return NextResponse.json({ message: "Dokumen awal berhasil diunggah! Menunggu validasi dari bagian Keuangan." });
-  } catch (err) {
-    console.error("Upload tahap 1 error:", err);
-    return NextResponse.json({ error: "Gagal mengunggah file. Silakan coba lagi." }, { status: 500 });
+  } catch (error: any) {
+    console.error("Upload tahap 1 error:", error);
+    return NextResponse.json({ error: error.message || "Gagal mengunggah file. Silakan coba lagi." }, { status: 500 });
   }
 }
