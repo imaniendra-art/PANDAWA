@@ -1,12 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromSession, unauthorized, forbidden } from "@/lib/api-helpers";
-import { parseForm, saveFile } from "@/lib/upload";
+import { promises as fsPromises } from "fs";
 import fs from "fs";
 import path from "path";
 
 const toTitleCase = (str: string) => {
   return str.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 };
+
+async function saveFileNative(file: File, prefix: string, nim: string) {
+  const allowed = ["pdf", "png", "jpg", "jpeg"];
+  const ext = file.name.split('.').pop()?.toLowerCase();
+  if (!ext || !allowed.includes(ext)) return null;
+
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+  const fileName = `${nim}_${prefix}_${Date.now()}.${ext}`;
+  const uploadDir = path.join(process.cwd(), 'public/uploads', prefix);
+  
+  await fsPromises.mkdir(uploadDir, { recursive: true });
+  
+  const filePath = path.join(uploadDir, fileName);
+  await fsPromises.writeFile(filePath, buffer);
+  return `/uploads/${prefix}/${fileName}`;
+}
 
 export async function POST(req: NextRequest) {
   console.log("Memulai proses submit biodata...");
@@ -25,18 +42,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Status tidak valid untuk pengisian biodata." }, { status: 400 });
     }
 
-    const { fields, files } = await parseForm(req);
-    console.log("Menerima data:", fields);
+    const formData = await req.formData();
+    console.log("Menerima form data entries...");
 
-    const {
-      nama_lengkap,
-      nik,
-      tempat_lahir,
-      tanggal_lahir,
-      konsentrasi,
-      judul_skripsi,
-      ukuran_toga,
-    } = fields;
+    const nama_lengkap = formData.get('nama_lengkap') as string;
+    const nik = formData.get('nik') as string;
+    const tempat_lahir = formData.get('tempat_lahir') as string;
+    const tanggal_lahir = formData.get('tanggal_lahir') as string;
+    const konsentrasi = formData.get('konsentrasi') as string;
+    const judul_skripsi = formData.get('judul_skripsi') as string;
+    const ukuran_toga = formData.get('ukuran_toga') as string;
 
     if (
       !nama_lengkap || !nik || !tempat_lahir || !tanggal_lahir ||
@@ -52,17 +67,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "NIK harus murni angka dan berjumlah 16 digit." }, { status: 400 });
     }
 
-    const fileKtp = files["file_ktp"];
-    const fileIjazahSma = files["file_ijazah_sma"];
-    const fileAktaKelahiran = files["file_akta_kelahiran"];
+    const fileKtp = formData.get('file_ktp') as File | null;
+    const fileIjazahSma = formData.get('file_ijazah_sma') as File | null;
+    const fileAktaKelahiran = formData.get('file_akta_kelahiran') as File | null;
 
     if (!fileKtp || !fileIjazahSma || !fileAktaKelahiran) {
       return NextResponse.json({ error: "File KTP, Ijazah SMA, dan Akta Kelahiran wajib diunggah." }, { status: 400 });
     }
 
-    const pathKtp = await saveFile(fileKtp, "ktp", `${user.username}_${Date.now()}`);
-    const pathIjazah = await saveFile(fileIjazahSma, "ijazah_sma", `${user.username}_${Date.now()}`);
-    const pathAkta = await saveFile(fileAktaKelahiran, "akta", `${user.username}_${Date.now()}`);
+    const pathKtp = await saveFileNative(fileKtp, "ktp", user.username);
+    const pathIjazah = await saveFileNative(fileIjazahSma, "ijazah_sma", user.username);
+    const pathAkta = await saveFileNative(fileAktaKelahiran, "akta", user.username);
 
     if (!pathKtp || !pathIjazah || !pathAkta) {
       return NextResponse.json({ error: "Format file tidak didukung (harus PDF/JPG/PNG)." }, { status: 400 });
