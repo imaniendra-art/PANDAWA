@@ -164,8 +164,9 @@ export default function MahasiswaDashboard() {
     setIsLoadingBiodata(true);
     try {
       await submitBiodata.mutateAsync(fd);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error("DETAIL ERROR UPLOAD:", error);
+      alert("Gagal Upload: " + (error.message || "Terjadi kesalahan sistem"));
     } finally {
       setIsLoadingBiodata(false);
     }
