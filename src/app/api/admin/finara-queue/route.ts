@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { getUserFromSession, unauthorized, forbidden } from "@/lib/api-helpers";
 
 export async function GET() {
-  const user = await getUserFromSession();
-  if (!user) return unauthorized();
-  if (user.role !== "admin") return forbidden();
-
   try {
+    const user = await getUserFromSession();
+    if (!user) return unauthorized();
+    if (user.role !== "admin") return forbidden();
+
     const finaraUrl = process.env.FINARA_API_URL || "http://localhost:3000/api/finara/keuangan-wisuda";
     const secret = process.env.PANDAWA_FINARA_SECRET || "pandawa-secret-key-123";
 

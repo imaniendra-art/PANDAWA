@@ -35,8 +35,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ message: "Registrasi berhasil! Silakan login." });
-  } catch (err) {
+  } catch (err: any) {
     console.error("Register error:", err);
-    return NextResponse.json({ error: "Terjadi kesalahan server." }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Terjadi kesalahan server." }, { status: 500 });
   }
 }

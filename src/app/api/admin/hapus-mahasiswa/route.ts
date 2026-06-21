@@ -18,33 +18,38 @@ function deleteFileIfExists(filePath: string | null) {
 }
 
 export async function POST(req: Request) {
-  const user = await getUserFromSession();
-  if (!user) return unauthorized();
-  if (user.role !== "admin") return forbidden();
+  try {
+    const user = await getUserFromSession();
+    if (!user) return unauthorized();
+    if (user.role !== "admin") return forbidden();
 
-  await connectDB();
-  const { studentId } = await req.json();
+    await connectDB();
+    const { studentId } = await req.json();
 
-  if (!studentId) return NextResponse.json({ error: "ID tidak valid." }, { status: 400 });
+    if (!studentId) return NextResponse.json({ error: "ID tidak valid." }, { status: 400 });
 
-  const student = await User.findById(studentId);
-  if (!student) return NextResponse.json({ error: "Mahasiswa tidak ditemukan." }, { status: 404 });
-  if (student.role !== "mahasiswa") return NextResponse.json({ error: "Hanya akun mahasiswa yang dapat dihapus." }, { status: 400 });
+    const student = await User.findById(studentId);
+    if (!student) return NextResponse.json({ error: "Mahasiswa tidak ditemukan." }, { status: 404 });
+    if (student.role !== "mahasiswa") return NextResponse.json({ error: "Hanya akun mahasiswa yang dapat dihapus." }, { status: 400 });
 
-  const namaMhs = student.namaLengkap || student.username;
+    const namaMhs = student.namaLengkap || student.username;
 
-  deleteFileIfExists(student.fileBebasSks);
-  deleteFileIfExists(student.fileBuktiPembayaran);
-  deleteFileIfExists(student.fileKtp);
-  deleteFileIfExists(student.fileIjazahSma);
-  deleteFileIfExists(student.fileAktaKelahiran);
-  if (student.fileSuratPernyataan && student.fileSuratPernyataan !== "AUTO") {
-    deleteFileIfExists(student.fileSuratPernyataan);
+    deleteFileIfExists(student.fileBebasSks);
+    deleteFileIfExists(student.fileBuktiPembayaran);
+    deleteFileIfExists(student.fileKtp);
+    deleteFileIfExists(student.fileIjazahSma);
+    deleteFileIfExists(student.fileAktaKelahiran);
+    if (student.fileSuratPernyataan && student.fileSuratPernyataan !== "AUTO") {
+      deleteFileIfExists(student.fileSuratPernyataan);
+    }
+
+    await User.findByIdAndDelete(studentId);
+
+    return NextResponse.json({
+      message: `Akun mahasiswa ${namaMhs} beserta berkas-berkasnya berhasil dihapus permanen.`,
+    });
+  } catch (error: any) {
+    console.error("POST admin hapus-mahasiswa error:", error);
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
-
-  await User.findByIdAndDelete(studentId);
-
-  return NextResponse.json({
-    message: `Akun mahasiswa ${namaMhs} beserta berkas-berkasnya berhasil dihapus permanen.`,
-  });
 }

@@ -4,18 +4,18 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 
 export async function GET(req: Request) {
-  const user = await getUserFromSession();
-  if (!user) return unauthorized();
-  if (user.role !== "admin" && user.role !== "keuangan") return forbidden();
-
-  const { searchParams } = new URL(req.url);
-  const token = searchParams.get("token");
-
-  if (!token) {
-    return NextResponse.json({ error: "Token tidak diberikan." }, { status: 400 });
-  }
-
   try {
+    const user = await getUserFromSession();
+    if (!user) return unauthorized();
+    if (user.role !== "admin" && user.role !== "keuangan") return forbidden();
+
+    const { searchParams } = new URL(req.url);
+    const token = searchParams.get("token");
+
+    if (!token) {
+      return NextResponse.json({ error: "Token tidak diberikan." }, { status: 400 });
+    }
+
     await connectDB();
     const student = await User.findOne({ qrCodeToken: token });
 
@@ -31,18 +31,18 @@ export async function GET(req: Request) {
       statusToga: student.statusToga,
       waktuAmbilToga: student.waktuAmbilToga,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error("Fetch scan error:", err);
-    return NextResponse.json({ error: "Terjadi kesalahan server." }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Terjadi kesalahan server." }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
-  const user = await getUserFromSession();
-  if (!user) return unauthorized();
-  if (user.role !== "admin" && user.role !== "keuangan") return forbidden();
-
   try {
+    const user = await getUserFromSession();
+    if (!user) return unauthorized();
+    if (user.role !== "admin" && user.role !== "keuangan") return forbidden();
+
     await connectDB();
     const { token } = await req.json();
 
@@ -68,8 +68,8 @@ export async function POST(req: Request) {
       message: "Toga berhasil diserahkan.", 
       waktuAmbilToga: student.waktuAmbilToga 
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error("Submit scan error:", err);
-    return NextResponse.json({ error: "Terjadi kesalahan server." }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Terjadi kesalahan server." }, { status: 500 });
   }
 }
