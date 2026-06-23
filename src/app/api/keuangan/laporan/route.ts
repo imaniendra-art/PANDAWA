@@ -28,9 +28,16 @@ export async function GET(req: NextRequest) {
 
     const mahasiswaList = await User.find(baseFilter);
 
-    const lulusStatuses = ["Lulus/Cetak Kartu", "Menunggu Validasi Panitia", "Valid/Lunas"];
-    const validatedCount = mahasiswaList.filter((m) => lulusStatuses.includes(m.statusPendaftaran)).length;
-    const totalPemasukanPendaftaran = validatedCount * (selectedAngkatan?.biaya || 0);
+    const unpaidStatuses = ["Belum Mendaftar", "Menunggu Validasi Keuangan", "Revisi Pembayaran", "-"];
+    const validatedCount = mahasiswaList.filter((m) => !unpaidStatuses.includes(m.statusPendaftaran)).length;
+    const biayaPerMhs = selectedAngkatan?.biaya || 0;
+    const totalPemasukanPendaftaran = validatedCount * biayaPerMhs;
+
+    console.log("=== DEBUG LAPORAN KEUANGAN ===");
+    console.log("Jumlah mahasiswa terhitung lunas:", validatedCount);
+    console.log("Nominal biaya yang digunakan:", biayaPerMhs);
+    console.log("Total Pemasukan:", totalPemasukanPendaftaran);
+    console.log("===============================");
 
     return NextResponse.json({
       mahasiswaList,

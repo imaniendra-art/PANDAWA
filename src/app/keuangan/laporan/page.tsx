@@ -6,13 +6,15 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import { Download, Filter, ChevronDown, Loader2 } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { Download, Filter, ChevronDown, Loader2, FileText, X, ExternalLink, Eye } from "lucide-react";
 
 export default function LaporanKeuanganPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [selectedAngkatan, setSelectedAngkatan] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.replace("/login");
@@ -51,7 +53,7 @@ export default function LaporanKeuanganPage() {
            
            <div className="w-full md:w-auto flex-1 relative z-10">
              <div className="flex items-center gap-3 mb-2">
-               <Link href="/keuangan" className="text-cyan-600 dark:text-cyan-400 text-sm hover:underline font-medium">&larr; Kembali ke Dashboard</Link>
+               <BackButton href="/keuangan" label="Kembali ke Dashboard" />
              </div>
              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-1">Laporan Keuangan</h1>
              <p className="text-sm text-cyan-600 dark:text-cyan-400 font-medium tracking-wide">Data Validasi Pembayaran Wisuda</p>
@@ -121,6 +123,7 @@ export default function LaporanKeuanganPage() {
                   <th className="px-6 py-4">No</th>
                   <th className="px-6 py-4">NIM</th>
                   <th className="px-6 py-4">Nama Lengkap</th>
+                  <th className="px-6 py-4 text-center">Dokumen</th>
                   <th className="px-6 py-4 text-center">Status Pembayaran</th>
                   <th className="px-6 py-4">Catatan</th>
                 </tr>
@@ -131,6 +134,13 @@ export default function LaporanKeuanganPage() {
                     <td className="px-6 py-4 text-slate-500 font-mono">{idx + 1}</td>
                     <td className="px-6 py-4 font-mono text-cyan-600 dark:text-cyan-400 font-bold">{m.username}</td>
                     <td className="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">{m.namaLengkap || "-"}</td>
+                    <td className="px-6 py-4 text-center">
+                      {m.fileBuktiPembayaran ? (
+                        <button onClick={() => setPreviewUrl(m.fileBuktiPembayaran)} className="px-4 py-1.5 bg-white/10 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-full text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:border-emerald-300 dark:hover:border-emerald-500/50 transition-all shadow-sm flex items-center justify-center gap-1.5 mx-auto">
+                          <Eye className="h-3.5 w-3.5" /> Lihat Bukti
+                        </button>
+                      ) : <span className="text-[10px] text-slate-400 italic">Tidak ada bukti</span>}
+                    </td>
                     <td className="px-6 py-4 text-center">
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-slate-100 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-white/10">
                         {m.statusPendaftaran}
@@ -143,7 +153,7 @@ export default function LaporanKeuanganPage() {
                 ))}
                 {data?.mahasiswaList.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                       Belum ada data pendaftaran yang tercatat.
                     </td>
                   </tr>
@@ -153,6 +163,34 @@ export default function LaporanKeuanganPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal Preview */}
+      {previewUrl && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 sm:p-6" onClick={() => setPreviewUrl(null)}>
+          <div className="bg-white dark:bg-slate-900 w-full max-w-4xl h-[85vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
+              <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" /> Pratinjau Dokumen
+              </h3>
+              <button onClick={() => setPreviewUrl(null)} className="text-slate-500 hover:text-rose-500 bg-slate-200/50 hover:bg-rose-100 dark:bg-white/10 dark:hover:bg-rose-500/20 p-2 rounded-xl transition-colors">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 flex items-center justify-center bg-black/20 dark:bg-black/40 overflow-hidden rounded-lg p-2">
+              {previewUrl.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) ? (
+                <img src={previewUrl} alt="Preview Dokumen" className="object-contain w-full h-full max-h-[60vh] md:max-h-[70vh]" />
+              ) : (
+                <iframe src={previewUrl} className="w-full h-[60vh] md:h-[70vh] rounded-xl bg-white dark:bg-slate-800" title="Preview" />
+              )}
+            </div>
+            <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-center">
+              <a href={previewUrl} target="_blank" className="text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-2">
+                <ExternalLink className="h-4 w-4" /> Buka di Tab Baru
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

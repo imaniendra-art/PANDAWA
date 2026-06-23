@@ -6,6 +6,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import BackButton from "@/components/BackButton";
 import { Settings, CheckCircle, AlertTriangle, Loader2, User, CreditCard, Building2, Save } from "lucide-react";
 
 export default function SettingsPage() {
@@ -13,7 +14,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const [flash, setFlash] = useState<{ type: string; message: string } | null>(null);
   const [form, setForm] = useState({
-    ketuaPanitia: "", nidnKetua: "", biayaWisuda: "", ketuaPt: "", nidnKetuaPt: "",
+    ketuaPanitia: "", nidnKetua: "", ketuaPt: "", nidnKetuaPt: "",
   });
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export default function SettingsPage() {
       setForm({
         ketuaPanitia: d.ketuaPanitia || "",
         nidnKetua: d.nidnKetua || "",
-        biayaWisuda: d.biayaWisuda || "",
+
         ketuaPt: d.ketuaPt || "",
         nidnKetuaPt: d.nidnKetuaPt || "",
       });
@@ -84,7 +85,7 @@ export default function SettingsPage() {
            
            <div className="w-full relative z-10">
              <div className="flex items-center gap-3 mb-2">
-               <Link href="/admin" className="text-cyan-600 dark:text-cyan-400 text-sm hover:underline font-medium">&larr; Kembali ke Dashboard Admin</Link>
+               <BackButton href="/admin" label="Kembali ke Dashboard Admin" />
              </div>
              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-1 flex items-center gap-3">
                <Settings className="h-8 w-8 text-cyan-500" /> Konfigurasi Sistem
@@ -109,11 +110,7 @@ export default function SettingsPage() {
                 <label className={labelClassName}>NIDN Ketua Panitia</label>
                 <input type="text" placeholder="Nomor Induk Dosen Nasional" value={form.nidnKetua} onChange={(e) => setForm({ ...form, nidnKetua: e.target.value })} className={inputClassName} />
               </div>
-              <div>
-                <label className={labelClassName}><CreditCard className="h-4 w-4" /> Biaya Default Wisuda (Rp)</label>
-                <input type="number" placeholder="Contoh: 1500000" value={form.biayaWisuda} onChange={(e) => setForm({ ...form, biayaWisuda: e.target.value })} className={inputClassName} />
-                <p className="text-[10px] text-slate-500 mt-1">*Nilai ini akan digunakan sebagai default saat membuat angkatan baru.</p>
-              </div>
+
             </div>
 
             <div className="space-y-6">

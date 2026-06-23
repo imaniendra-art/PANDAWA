@@ -6,7 +6,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import { Users, Search, CheckSquare, Trash2, KeyRound, Loader2, CheckCircle, AlertTriangle, ChevronDown } from "lucide-react";
+import BackButton from "@/components/BackButton";
+import { Users, Search, CheckSquare, Trash2, KeyRound, Loader2, CheckCircle, AlertTriangle, ChevronDown, FileText, X, ExternalLink, Eye, User, IdCard, Scroll, GraduationCap, CreditCard, FileCheck } from "lucide-react";
 
 interface Mahasiswa {
   _id: string;
@@ -14,6 +15,12 @@ interface Mahasiswa {
   namaLengkap: string | null;
   statusPendaftaran: string;
   createdAt: string;
+  fileBuktiPembayaran?: string | null;
+  fileBebasSks?: string | null;
+  fileFotoUrl?: string | null;
+  fileKtp?: string | null;
+  fileAktaKelahiran?: string | null;
+  fileIjazahSma?: string | null;
 }
 
 export default function KelolaUserPage() {
@@ -23,6 +30,7 @@ export default function KelolaUserPage() {
   const [selectedAngkatan, setSelectedAngkatan] = useState("");
   const [flash, setFlash] = useState<{ type: string; message: string } | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.replace("/login");
@@ -103,7 +111,7 @@ export default function KelolaUserPage() {
            
            <div className="w-full md:w-auto flex-1 relative z-10">
              <div className="flex items-center gap-3 mb-2">
-               <Link href="/admin" className="text-cyan-600 dark:text-cyan-400 text-sm hover:underline font-medium">&larr; Kembali ke Dashboard</Link>
+               <BackButton href="/admin" label="Kembali ke Dashboard" />
              </div>
              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-1">Data Pendaftar</h1>
              <p className="text-sm text-cyan-600 dark:text-cyan-400 font-medium tracking-wide">Kelola Akun dan Data Identitas Mahasiswa</p>
@@ -158,6 +166,8 @@ export default function KelolaUserPage() {
                   <th className="px-6 py-4">NIM</th>
                   <th className="px-6 py-4">Nama</th>
                   <th className="px-6 py-4 text-center">Status</th>
+                  <th className="px-6 py-4 text-center">Berkas Pendaftaran</th>
+                  <th className="px-6 py-4 text-center">Verifikasi Panitia</th>
                   <th className="px-6 py-4 text-center">Terdaftar</th>
                   <th className="px-6 py-4 text-center">Aksi</th>
                 </tr>
@@ -171,6 +181,62 @@ export default function KelolaUserPage() {
                       <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                         {m.statusPendaftaran}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex flex-wrap justify-center items-center gap-1.5">
+                        <button 
+                          onClick={() => m.fileFotoUrl && setPreviewUrl(m.fileFotoUrl)}
+                          disabled={!m.fileFotoUrl}
+                          className={`p-2 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 transition-all duration-200 ${m.fileFotoUrl ? 'text-slate-500 hover:text-cyan-600 dark:text-slate-400 dark:hover:text-cyan-400 hover:bg-white dark:hover:bg-white/10 shadow-sm cursor-pointer' : 'opacity-30 text-slate-400 dark:text-slate-500 cursor-not-allowed'}`}
+                          title="Lihat Pas Foto"
+                        >
+                          <User className="h-4 w-4" />
+                        </button>
+                        <button 
+                          onClick={() => m.fileKtp && setPreviewUrl(m.fileKtp)}
+                          disabled={!m.fileKtp}
+                          className={`p-2 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 transition-all duration-200 ${m.fileKtp ? 'text-slate-500 hover:text-cyan-600 dark:text-slate-400 dark:hover:text-cyan-400 hover:bg-white dark:hover:bg-white/10 shadow-sm cursor-pointer' : 'opacity-30 text-slate-400 dark:text-slate-500 cursor-not-allowed'}`}
+                          title="Lihat KTP"
+                        >
+                          <IdCard className="h-4 w-4" />
+                        </button>
+                        <button 
+                          onClick={() => m.fileAktaKelahiran && setPreviewUrl(m.fileAktaKelahiran)}
+                          disabled={!m.fileAktaKelahiran}
+                          className={`p-2 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 transition-all duration-200 ${m.fileAktaKelahiran ? 'text-slate-500 hover:text-cyan-600 dark:text-slate-400 dark:hover:text-cyan-400 hover:bg-white dark:hover:bg-white/10 shadow-sm cursor-pointer' : 'opacity-30 text-slate-400 dark:text-slate-500 cursor-not-allowed'}`}
+                          title="Lihat Akta Kelahiran"
+                        >
+                          <Scroll className="h-4 w-4" />
+                        </button>
+                        <button 
+                          onClick={() => m.fileIjazahSma && setPreviewUrl(m.fileIjazahSma)}
+                          disabled={!m.fileIjazahSma}
+                          className={`p-2 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 transition-all duration-200 ${m.fileIjazahSma ? 'text-slate-500 hover:text-cyan-600 dark:text-slate-400 dark:hover:text-cyan-400 hover:bg-white dark:hover:bg-white/10 shadow-sm cursor-pointer' : 'opacity-30 text-slate-400 dark:text-slate-500 cursor-not-allowed'}`}
+                          title="Lihat Ijazah SMA"
+                        >
+                          <GraduationCap className="h-4 w-4" />
+                        </button>
+                        <button 
+                          onClick={() => m.fileBuktiPembayaran && setPreviewUrl(m.fileBuktiPembayaran)}
+                          disabled={!m.fileBuktiPembayaran}
+                          className={`p-2 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 transition-all duration-200 ${m.fileBuktiPembayaran ? 'text-slate-500 hover:text-cyan-600 dark:text-slate-400 dark:hover:text-cyan-400 hover:bg-white dark:hover:bg-white/10 shadow-sm cursor-pointer' : 'opacity-30 text-slate-400 dark:text-slate-500 cursor-not-allowed'}`}
+                          title="Lihat Bukti Bayar"
+                        >
+                          <CreditCard className="h-4 w-4" />
+                        </button>
+                        <button 
+                          onClick={() => m.fileBebasSks && setPreviewUrl(m.fileBebasSks)}
+                          disabled={!m.fileBebasSks}
+                          className={`p-2 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 transition-all duration-200 ${m.fileBebasSks ? 'text-slate-500 hover:text-cyan-600 dark:text-slate-400 dark:hover:text-cyan-400 hover:bg-white dark:hover:bg-white/10 shadow-sm cursor-pointer' : 'opacity-30 text-slate-400 dark:text-slate-500 cursor-not-allowed'}`}
+                          title="Lihat Bebas SKS"
+                        >
+                          <FileCheck className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {/* Placeholder for future verification buttons or leave empty/remove if redundant */}
+                      <span className="text-xs text-slate-400 dark:text-slate-500 italic">Validasi via Detail</span>
                     </td>
                     <td className="px-6 py-4 text-center text-slate-500 dark:text-slate-400 font-medium">
                       {new Date(m.createdAt).toLocaleDateString("id-ID")}
@@ -209,6 +275,34 @@ export default function KelolaUserPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal Preview */}
+      {previewUrl && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4 sm:p-6" onClick={() => setPreviewUrl(null)}>
+          <div className="bg-white dark:bg-slate-900 w-full max-w-4xl h-[85vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
+              <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" /> Pratinjau Dokumen
+              </h3>
+              <button onClick={() => setPreviewUrl(null)} className="text-slate-500 hover:text-rose-500 bg-slate-200/50 hover:bg-rose-100 dark:bg-white/10 dark:hover:bg-rose-500/20 p-2 rounded-xl transition-colors">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 flex items-center justify-center bg-black/20 dark:bg-black/40 overflow-hidden rounded-lg p-2">
+              {previewUrl.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) ? (
+                <img src={previewUrl} alt="Preview Dokumen" className="object-contain w-full h-full max-h-[60vh] md:max-h-[70vh]" />
+              ) : (
+                <iframe src={previewUrl} className="w-full h-[60vh] md:h-[70vh] rounded-xl bg-white dark:bg-slate-800" title="Preview" />
+              )}
+            </div>
+            <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-center">
+              <a href={previewUrl} target="_blank" className="text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-2">
+                <ExternalLink className="h-4 w-4" /> Buka di Tab Baru
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

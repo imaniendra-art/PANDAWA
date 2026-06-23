@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUserFromSession, unauthorized, forbidden } from "@/lib/api-helpers";
 import { User } from "@/models/User";
+import { getSettings } from "@/models/Settings";
 
 export async function GET() {
   try {
@@ -22,6 +23,8 @@ export async function GET() {
       await user.save();
     }
 
+    const settings = await getSettings();
+
     const data = {
       id: user._id,
       username: user.username,
@@ -40,6 +43,7 @@ export async function GET() {
       fileKtp: user.fileKtp,
       fileIjazahSma: user.fileIjazahSma,
       fileAktaKelahiran: user.fileAktaKelahiran,
+      fileFotoUrl: user.fileFotoUrl,
       catatanAdmin: user.catatanAdmin,
       fileSuratPernyataan: user.fileSuratPernyataan,
       statusToga: user.statusToga,
@@ -47,6 +51,8 @@ export async function GET() {
       qrCodeToken: user.qrCodeToken,
       nomorUrut,
       createdAt: user.createdAt,
+      ketuaPanitia: settings.ketuaPanitia,
+      nidnKetua: settings.nidnKetua,
     };
 
     return NextResponse.json(data);

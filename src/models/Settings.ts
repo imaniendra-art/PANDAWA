@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface ISettings extends Document {
   ketuaPanitia: string;
   nidnKetua: string;
-  biayaWisuda: string;
+
   ketuaPt: string;
   nidnKetuaPt: string;
 }
@@ -11,7 +11,7 @@ export interface ISettings extends Document {
 const SettingsSchema = new Schema<ISettings>({
   ketuaPanitia: { type: String, default: "DR. HM. GANTI NAMA, SE., MM." },
   nidnKetua: { type: String, default: "123456789" },
-  biayaWisuda: { type: String, default: "Rp 1.500.000" },
+
   ketuaPt: { type: String, default: "Prof. Dr. H. Nama Ketua PT, M.Si." },
   nidnKetuaPt: { type: String, default: "987654321" },
 });

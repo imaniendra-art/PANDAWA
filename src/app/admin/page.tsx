@@ -498,8 +498,12 @@ export default function AdminDashboard() {
                 <FileX className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex-1 bg-slate-200/50 dark:bg-black/20 p-2">
-              <iframe src={previewUrl} className="w-full h-full rounded-xl bg-white dark:bg-slate-800" title="Preview" />
+            <div className="flex-1 flex items-center justify-center bg-black/20 dark:bg-black/40 overflow-hidden rounded-lg p-2">
+              {previewUrl.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i) ? (
+                <img src={previewUrl} alt="Preview Dokumen" className="object-contain w-full h-full max-h-[60vh] md:max-h-[70vh]" />
+              ) : (
+                <iframe src={previewUrl} className="w-full h-[60vh] md:h-[70vh] rounded-xl bg-white dark:bg-slate-800" title="Preview" />
+              )}
             </div>
             <div className="p-4 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-center">
               <a href={previewUrl} target="_blank" className="text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-2">

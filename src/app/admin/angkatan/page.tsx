@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import BackButton from "@/components/BackButton";
 import { Loader2, CheckCircle, AlertTriangle, Users, Plus, Edit2, Trash2, Calendar, Hash, Type } from "lucide-react";
 
 interface AngkatanItem {
@@ -95,7 +96,7 @@ export default function AngkatanPage() {
            
            <div className="w-full md:w-auto flex-1 relative z-10">
              <div className="flex items-center gap-3 mb-2">
-               <Link href="/admin" className="text-cyan-600 dark:text-cyan-400 text-sm hover:underline font-medium">&larr; Kembali ke Dashboard Admin</Link>
+               <BackButton href="/admin" label="Kembali ke Dashboard Admin" />
              </div>
              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-1">Kelola Gelombang</h1>
              <p className="text-sm text-cyan-600 dark:text-cyan-400 font-medium tracking-wide">Pengaturan Angkatan Wisuda</p>
@@ -133,13 +134,15 @@ export default function AngkatanPage() {
                   className={inputClassName}
                 />
               </div>
-              <div>
-                <label className={labelClassName}><Hash className="h-4 w-4"/> Biaya Wisuda (Rp)</label>
+              <div className="bg-amber-50 dark:bg-amber-900/10 p-4 rounded-xl border border-amber-200 dark:border-amber-500/30">
+                <label className={`${labelClassName} text-amber-700 dark:text-amber-400`}><Hash className="h-4 w-4"/> Biaya Wisuda (Rp) *</label>
                 <input
                   type="number" placeholder="Cth: 1500000"
                   value={form.biaya} onChange={(e) => setForm({ ...form, biaya: e.target.value })}
-                  className={inputClassName}
+                  className={`${inputClassName} border-amber-300 dark:border-amber-500/50 focus:ring-amber-500 focus:border-amber-500 font-bold text-amber-900 dark:text-amber-100`}
+                  required
                 />
+                <p className="text-[10px] text-amber-600 dark:text-amber-500 mt-2 font-medium">Nilai ini bersifat final untuk angkatan ini dan akan digunakan sebagai rujukan tagihan.</p>
               </div>
             </div>
             <div className="flex gap-3 pt-4 border-t border-slate-200 dark:border-white/10">

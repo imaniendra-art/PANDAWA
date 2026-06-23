@@ -152,7 +152,7 @@ export default function MahasiswaDashboard() {
     
     // Validasi file max 2MB
     const maxSize = 2 * 1024 * 1024;
-    const filesToCheck = ["file_ktp", "file_ijazah_sma", "file_akta_kelahiran"];
+    const filesToCheck = ["file_ktp", "file_ijazah_sma", "file_akta_kelahiran", "file_foto"];
     for (const field of filesToCheck) {
       const file = fd.get(field) as File;
       if (file && file.size > maxSize) {
@@ -312,6 +312,11 @@ export default function MahasiswaDashboard() {
                   <div>
                     <label className={labelClassName}>Nama Lengkap Resmi</label>
                     <input type="text" name="nama_lengkap" defaultValue={data.namaLengkap || ""} onInput={(e) => e.currentTarget.value = e.currentTarget.value.replace(/\b\w/g, l => l.toUpperCase())} className={inputClassName} placeholder="Sesuai cetakan ijazah" required />
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-2xl border border-cyan-200 dark:border-cyan-500/20 shadow-inner flex flex-col gap-2">
+                    <label className={labelClassName}>Pas Foto Formal (3x4)</label>
+                    <input type="file" name="file_foto" accept=".png,.jpg,.jpeg" className={fileInputClass} required />
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">*Format: JPG/PNG, Maksimal 2MB. Gunakan latar belakang warna solid.</p>
                   </div>
                   <div>
                     <label className={labelClassName}>Nomor Induk Kependudukan</label>

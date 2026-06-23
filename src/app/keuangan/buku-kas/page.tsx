@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import BackButton from "@/components/BackButton";
 import { Loader2, Plus, Wallet, TrendingUp, TrendingDown, Landmark, CheckCircle, AlertTriangle, ChevronDown, Calendar, Type, Hash } from "lucide-react";
 
 interface BukuKasData {
@@ -100,7 +101,7 @@ export default function BukuKasPage() {
            
            <div className="w-full md:w-auto flex-1 relative z-10">
              <div className="flex items-center gap-3 mb-2">
-               <Link href="/keuangan" className="text-cyan-600 dark:text-cyan-400 text-sm hover:underline font-medium">&larr; Kembali ke Dashboard Keuangan</Link>
+               <BackButton href="/keuangan" label="Kembali ke Dashboard Keuangan" />
              </div>
              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-1">Buku Kas</h1>
              <p className="text-sm text-cyan-600 dark:text-cyan-400 font-medium tracking-wide">Pencatatan Pemasukan & Pengeluaran</p>

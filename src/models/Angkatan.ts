@@ -12,7 +12,7 @@ const AngkatanSchema = new Schema<IAngkatan>(
   {
     nama: { type: String, required: true, unique: true },
     tanggalWisuda: { type: Date, default: null },
-    biaya: { type: Number, required: true, default: 1500000 },
+    biaya: { type: Number, required: true },
     isActive: { type: Boolean, default: false },
   },
   { timestamps: { createdAt: true, updatedAt: false } }

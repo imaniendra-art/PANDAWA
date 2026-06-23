@@ -33,6 +33,12 @@ export async function GET(req: NextRequest) {
     const biayaPerMhs = selectedAngkatan?.biaya || 0;
     const totalPemasukanPendaftaran = validatedCount * biayaPerMhs;
 
+    console.log("=== DEBUG DASHBOARD KEUANGAN ===");
+    console.log("Jumlah mahasiswa terhitung lunas:", validatedCount);
+    console.log("Nominal biaya yang digunakan:", biayaPerMhs);
+    console.log("Total Pemasukan:", totalPemasukanPendaftaran);
+    console.log("================================");
+
     return NextResponse.json({
       mahasiswaList,
       validatedCount,

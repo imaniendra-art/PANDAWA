@@ -25,9 +25,9 @@ export async function POST(req: Request) {
     if (user.role !== "admin") return forbidden();
 
     await connectDB();
-    const { ketuaPanitia, nidnKetua, biayaWisuda, ketuaPt, nidnKetuaPt } = await req.json();
+    const { ketuaPanitia, nidnKetua, ketuaPt, nidnKetuaPt } = await req.json();
 
-    if (!ketuaPanitia || !nidnKetua || !biayaWisuda) {
+    if (!ketuaPanitia || !nidnKetua) {
       return NextResponse.json({ error: "Field wajib tidak boleh kosong." }, { status: 400 });
     }
 
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
     settings.ketuaPanitia = ketuaPanitia;
     settings.nidnKetua = nidnKetua;
-    settings.biayaWisuda = biayaWisuda;
+
     settings.ketuaPt = ketuaPt || "Nama Ketua PT";
     settings.nidnKetuaPt = nidnKetuaPt || "NIDN Ketua PT";
     await settings.save();

@@ -70,16 +70,18 @@ export async function POST(req: NextRequest) {
     const fileKtp = formData.get('file_ktp') as File | null;
     const fileIjazahSma = formData.get('file_ijazah_sma') as File | null;
     const fileAktaKelahiran = formData.get('file_akta_kelahiran') as File | null;
+    const fileFoto = formData.get('file_foto') as File | null;
 
-    if (!fileKtp || !fileIjazahSma || !fileAktaKelahiran) {
-      return NextResponse.json({ error: "File KTP, Ijazah SMA, dan Akta Kelahiran wajib diunggah." }, { status: 400 });
+    if (!fileKtp || !fileIjazahSma || !fileAktaKelahiran || !fileFoto) {
+      return NextResponse.json({ error: "File KTP, Ijazah SMA, Akta Kelahiran, dan Pas Foto wajib diunggah." }, { status: 400 });
     }
 
     const pathKtp = await saveFileNative(fileKtp, "ktp", user.username);
     const pathIjazah = await saveFileNative(fileIjazahSma, "ijazah_sma", user.username);
     const pathAkta = await saveFileNative(fileAktaKelahiran, "akta", user.username);
+    const pathFoto = await saveFileNative(fileFoto, "foto", user.username);
 
-    if (!pathKtp || !pathIjazah || !pathAkta) {
+    if (!pathKtp || !pathIjazah || !pathAkta || !pathFoto) {
       return NextResponse.json({ error: "Format file tidak didukung (harus PDF/JPG/PNG)." }, { status: 400 });
     }
 
@@ -93,6 +95,7 @@ export async function POST(req: NextRequest) {
     user.fileKtp = pathKtp;
     user.fileIjazahSma = pathIjazah;
     user.fileAktaKelahiran = pathAkta;
+    user.fileFotoUrl = pathFoto;
     user.statusPendaftaran = "Menunggu Validasi Admin";
     await user.save();
 

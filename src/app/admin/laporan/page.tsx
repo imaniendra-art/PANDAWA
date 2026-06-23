@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import BackButton from "@/components/BackButton";
 import { FileText, Download, Printer, Filter, ChevronDown, Loader2 } from "lucide-react";
 
 export default function LaporanAdminPage() {
@@ -51,7 +52,7 @@ export default function LaporanAdminPage() {
            
            <div className="w-full md:w-auto flex-1 relative z-10">
              <div className="flex items-center gap-3 mb-2">
-               <Link href="/admin" className="text-cyan-600 dark:text-cyan-400 text-sm hover:underline font-medium">&larr; Kembali ke Dashboard</Link>
+               <BackButton href="/admin" label="Kembali ke Dashboard" />
              </div>
              <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 tracking-tight mb-1">Riwayat Pemeriksaan & Laporan</h1>
              <p className="text-sm text-cyan-600 dark:text-cyan-400 font-medium tracking-wide">Data Wisudawan Terverifikasi</p>

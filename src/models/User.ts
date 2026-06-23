@@ -37,6 +37,7 @@ export interface IUser extends Document {
   fileKtp: string | null;
   fileIjazahSma: string | null;
   fileAktaKelahiran: string | null;
+  fileFotoUrl: string | null;
 
   // Admin
   catatanAdmin: string | null;
@@ -76,6 +77,7 @@ const UserSchema = new Schema<IUser>(
     fileKtp: { type: String, default: null },
     fileIjazahSma: { type: String, default: null },
     fileAktaKelahiran: { type: String, default: null },
+    fileFotoUrl: { type: String, default: null },
 
     catatanAdmin: { type: String, default: null },
     fileSuratPernyataan: { type: String, default: null },

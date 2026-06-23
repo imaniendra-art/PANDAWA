@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import BackButton from "@/components/BackButton";
 
 interface ScanData {
   id: string;
@@ -72,7 +73,7 @@ export default function AdminScanPage() {
           <div className="text-red-500 text-5xl mb-4">❌</div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Gagal Memuat</h2>
           <p className="text-gray-600 mb-6">{error.message}</p>
-          <button onClick={() => router.push("/admin/dashboard")} className="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg font-medium w-full">Kembali</button>
+          <div className="mt-4 flex justify-center"><BackButton href="/admin/dashboard" label="Kembali" className="w-full justify-center" /></div>
         </div>
       </div>
     );
@@ -142,12 +143,9 @@ export default function AdminScanPage() {
             <p className="text-red-500 text-sm text-center mt-4 font-medium">{submitMutation.error.message}</p>
           )}
           
-          <button 
-            onClick={() => router.push("/admin/dashboard")} 
-            className="w-full mt-4 text-gray-500 hover:text-gray-700 text-sm font-semibold py-2"
-          >
-            Kembali ke Dashboard
-          </button>
+          <div className="mt-6 flex justify-center">
+            <BackButton href="/admin/dashboard" label="Kembali ke Dashboard" className="w-full justify-center" />
+          </div>
         </div>
 
       </div>
